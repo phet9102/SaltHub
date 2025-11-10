@@ -1,0 +1,148 @@
+-- 🌈 Roblox UI Library Example by ChatGPT
+-- Place this LocalScript inside a ScreenGui in StarterGui
+
+local player = game.Players.LocalPlayer
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+gui.Name = "BeautifulUILibrary"
+
+-- 🌸 Main Frame
+local main = Instance.new("Frame")
+main.Size = UDim2.new(0, 300, 0, 400)
+main.Position = UDim2.new(0.5, -150, 0.5, -200)
+main.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+main.BorderSizePixel = 0
+main.Visible = true
+main.Parent = gui
+
+-- UICorner for rounded style
+local corner = Instance.new("UICorner", main)
+corner.CornerRadius = UDim.new(0, 12)
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Parent = main
+title.Size = UDim2.new(1, 0, 0, 40)
+title.BackgroundTransparency = 1
+title.Text = "🌟 Roblox UI Library"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 20
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Scroll Frame
+local scroll = Instance.new("ScrollingFrame")
+scroll.Size = UDim2.new(1, -10, 1, -50)
+scroll.Position = UDim2.new(0, 5, 0, 45)
+scroll.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+scroll.ScrollBarThickness = 6
+scroll.CanvasSize = UDim2.new(0, 0, 2, 0)
+scroll.Parent = main
+
+local scrollCorner = Instance.new("UICorner", scroll)
+scrollCorner.CornerRadius = UDim.new(0, 10)
+
+-- 🌟 BUTTON (Pop-up)
+local popupButton = Instance.new("TextButton")
+popupButton.Size = UDim2.new(1, -10, 0, 40)
+popupButton.Position = UDim2.new(0, 5, 0, 5)
+popupButton.Text = "Click Me (Pop-up)"
+popupButton.Parent = scroll
+popupButton.BackgroundColor3 = Color3.fromRGB(60, 60, 100)
+popupButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+popupButton.Font = Enum.Font.GothamBold
+popupButton.TextSize = 16
+
+local buttonCorner = Instance.new("UICorner", popupButton)
+buttonCorner.CornerRadius = UDim.new(0, 8)
+
+-- 🌸 POP-UP WINDOW
+local popup = Instance.new("Frame", gui)
+popup.Size = UDim2.new(0, 220, 0, 120)
+popup.Position = UDim2.new(0.5, -110, 0.5, -60)
+popup.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+popup.Visible = false
+local popupCorner = Instance.new("UICorner", popup)
+popupCorner.CornerRadius = UDim.new(0, 10)
+
+local popupText = Instance.new("TextLabel", popup)
+popupText.Size = UDim2.new(1, 0, 1, 0)
+popupText.Text = "✨ Hello! This is a Pop-up!"
+popupText.BackgroundTransparency = 1
+popupText.TextColor3 = Color3.fromRGB(255, 255, 255)
+popupText.Font = Enum.Font.Gotham
+popupText.TextSize = 18
+
+-- ปุ่มปิด Pop-up
+local closeBtn = Instance.new("TextButton", popup)
+closeBtn.Size = UDim2.new(0, 80, 0, 30)
+closeBtn.Position = UDim2.new(0.5, -40, 1, -40)
+closeBtn.Text = "Close"
+closeBtn.BackgroundColor3 = Color3.fromRGB(100, 70, 70)
+closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+local closeCorner = Instance.new("UICorner", closeBtn)
+closeCorner.CornerRadius = UDim.new(0, 6)
+
+popupButton.MouseButton1Click:Connect(function()
+	popup.Visible = true
+end)
+
+closeBtn.MouseButton1Click:Connect(function()
+	popup.Visible = false
+end)
+
+-- ✅ Selection Example
+local dropDown = Instance.new("Frame")
+dropDown.Size = UDim2.new(1, -10, 0, 100)
+dropDown.Position = UDim2.new(0, 5, 0, 60)
+dropDown.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
+dropDown.Parent = scroll
+
+local dropCorner = Instance.new("UICorner", dropDown)
+dropCorner.CornerRadius = UDim.new(0, 8)
+
+local selected = Instance.new("TextLabel", dropDown)
+selected.Text = "Select Option ↓"
+selected.Size = UDim2.new(1, 0, 0, 30)
+selected.BackgroundColor3 = Color3.fromRGB(70, 70, 90)
+selected.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+local options = {"Apple", "Banana", "Cherry"}
+for i, text in pairs(options) do
+	local btn = Instance.new("TextButton", dropDown)
+	btn.Size = UDim2.new(1, -10, 0, 25)
+	btn.Position = UDim2.new(0, 5, 0, 30 + (i * 30))
+	btn.Text = text
+	btn.BackgroundColor3 = Color3.fromRGB(60, 60, 80)
+	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	local c = Instance.new("UICorner", btn)
+	c.CornerRadius = UDim.new(0, 6)
+	
+	btn.MouseButton1Click:Connect(function()
+		selected.Text = "✅ Selected: " .. text
+	end)
+end
+
+-- 🔄 Loading Animation
+local loadingFrame = Instance.new("Frame", scroll)
+loadingFrame.Size = UDim2.new(1, -10, 0, 60)
+loadingFrame.Position = UDim2.new(0, 5, 0, 200)
+loadingFrame.BackgroundColor3 = Color3.fromRGB(45, 45, 65)
+
+local loadCorner = Instance.new("UICorner", loadingFrame)
+loadCorner.CornerRadius = UDim.new(0, 8)
+
+local loadingLabel = Instance.new("TextLabel", loadingFrame)
+loadingLabel.Size = UDim2.new(1, 0, 1, 0)
+loadingLabel.BackgroundTransparency = 1
+loadingLabel.Text = "Loading"
+loadingLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+loadingLabel.Font = Enum.Font.GothamBold
+loadingLabel.TextSize = 18
+
+task.spawn(function()
+	while task.wait(0.3) do
+		for _, dots in ipairs({".", "..", "..."}) do
+			loadingLabel.Text = "Loading" .. dots
+			task.wait(0.3)
+		end
+	end
+end)
