@@ -1,0 +1,826 @@
+--Auto Beginner Quest
+local args = {
+	workspace:WaitForChild("Proximity"):WaitForChild("Sensei Moro")
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("ProximityService"):WaitForChild("RF"):WaitForChild("Dialogue"):InvokeServer(unpack(args))
+
+local args = {
+	"Opened"
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("DialogueService"):WaitForChild("RE"):WaitForChild("DialogueEvent"):FireServer(unpack(args))
+
+local args = {
+	"CheckQuest"
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("DialogueService"):WaitForChild("RF"):WaitForChild("RunCommand"):InvokeServer(unpack(args))
+
+local args = {
+	"GiveIntroduction1"
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("DialogueService"):WaitForChild("RF"):WaitForChild("RunCommand"):InvokeServer(unpack(args))
+
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("StatusService"):WaitForChild("RF"):WaitForChild("GetPlayerEquipmentInfo"):InvokeServer()
+
+local args = {
+	"Closed"
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("DialogueService"):WaitForChild("RE"):WaitForChild("DialogueEvent"):FireServer(unpack(args))
+
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("MonetizationService"):WaitForChild("RF"):WaitForChild("GiftTo"):InvokeServer()
+
+local args = {
+	"Introduction1",
+	1
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("QuestService"):WaitForChild("RF"):WaitForChild("ProgressUIQuest"):InvokeServer(unpack(args))
+
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("StatusService"):WaitForChild("RF"):WaitForChild("GetPlayerEquipmentInfo"):InvokeServer()
+
+local args = {
+	"Introduction1",
+	2
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("QuestService"):WaitForChild("RF"):WaitForChild("ProgressUIQuest"):InvokeServer(unpack(args))
+
+local args = {
+	{
+		Runes = {},
+		Name = "Stone Pickaxe"
+	}
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("CharacterService"):WaitForChild("RF"):WaitForChild("EquipItem"):InvokeServer(unpack(args))
+
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("StatusService"):WaitForChild("RF"):WaitForChild("GetPlayerEquipmentInfo"):InvokeServer()
+
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("StatusService"):WaitForChild("RF"):WaitForChild("GetPlayerEquipmentInfo"):InvokeServer()
+
+--ทำเควสตี Pebble 6 อัน ใช้ Tween 
+
+local args = {
+	"Pickaxe"
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("ToolService"):WaitForChild("RF"):WaitForChild("ToolActivated"):InvokeServer(unpack(args))
+
+workspace.Rocks.Island1CaveStart:GetChildren()[41].Pebble.Hitbox
+--ใน หิน Pebble นั้นมีเลือดด้วย ถ้าเลือดเหลือ 0 ให้ไปตีหินอื่นเลย จนครบ 6
+
+-- ต่อมาเป็นการ Forge
+local args = {
+	workspace:WaitForChild("Proximity"):WaitForChild("Forge")
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("ProximityService"):WaitForChild("RF"):WaitForChild("Forge"):InvokeServer(unpack(args))
+local args = {
+	workspace:WaitForChild("Proximity"):WaitForChild("Forge")
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("ForgeService"):WaitForChild("RF"):WaitForChild("StartForge"):InvokeServer(unpack(args))
+local args = {
+	"Melt",
+	{
+		FastForge = false,
+		ItemType = "Weapon",
+		Ores = {
+			Stone = 2,
+			["Sand Stone"] = 1
+		}
+	}
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("ForgeService"):WaitForChild("RF"):WaitForChild("ChangeSequence"):InvokeServer(unpack(args))
+local args = {
+	"Pour",
+	{
+		ClientTime = 1765967265.740491
+	}
+}
+
+--Skip Melt, Pour มาที่ Hammer แทน
+
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("ForgeService"):WaitForChild("RF"):WaitForChild("ChangeSequence"):InvokeServer(unpack(args))
+local args = {
+	"Hammer",
+	{
+		ClientTime = 1765967280.6281168
+	}
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("ForgeService"):WaitForChild("RF"):WaitForChild("ChangeSequence"):InvokeServer(unpack(args))
+
+--Minigame Hammer
+workspace.Debris.Mold
+workspace.Debris.Mold.ClickDetector -- ใช้เม้ากดรัวๆ จนแตก
+
+--Last Minigame Hammer ; กดแล้ว ให้ติด Perfect
+local args = {
+	"Water",
+	{
+		ClientTime = 1765967408.15614
+	}
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("ForgeService"):WaitForChild("RF"):WaitForChild("ChangeSequence"):InvokeServer(unpack(args))
+
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("StatusService"):WaitForChild("RF"):WaitForChild("GetPlayerEquipmentInfo"):InvokeServer()
+
+local v_u_1 = game:GetService("ReplicatedStorage")
+local v_u_2 = game:GetService("UserInputService")
+game:GetService("RunService")
+local v3 = game:GetService("Players")
+local v_u_4 = game:GetService("TweenService")
+local v5 = v_u_1:WaitForChild("Shared")
+local v6 = v5:WaitForChild("Packages")
+local v7 = require(v6.Knit)
+require(v5.Spring)
+local v_u_8 = require(v5.Spring2)
+local v_u_9 = require(v6.Janitor)
+local v_u_10 = require(v5.Countdown)
+local v_u_11 = require(v5.Utils)
+local v_u_12 = require(v5.Data.Ore)
+local v_u_13 = require(v5.Data.Equipments)
+local v14 = v7.GetController("UIController")
+local v_u_15 = v7.GetController("ForgeController")
+local v_u_16 = v3.LocalPlayer:GetMouse()
+local v_u_17 = v14.PlayerGui:WaitForChild("Forge"):WaitForChild("HammerMinigame")
+local v_u_18 = Random.new()
+local v_u_19 = {
+    Enum.KeyCode.ButtonX,
+    Enum.KeyCode.ButtonA,
+    Enum.KeyCode.ButtonB,
+    Enum.KeyCode.ButtonY
+}
+local v_u_20 = {}
+local v21 = {}
+function pickInactiveControllerInput()
+    -- upvalues: (copy) v_u_19, (ref) v_u_20
+    local v22 = nil
+    while not v22 do
+        local v23 = v_u_19[math.random(1, #v_u_19)]
+        if not v_u_20[v23] then
+            return v23
+        end
+    end
+    return v22
+end
+function v21.CreateNote(_, p24, p_u_25, p_u_26)
+    -- upvalues: (copy) v_u_17, (copy) v_u_4, (copy) v_u_18, (copy) v_u_11, (copy) v_u_2, (copy) v_u_1, (ref) v_u_20
+    local v27 = p24.Lifetime
+    local v28 = v27 / 2.1
+    local _ = v28 * 1.5 - v28
+    local v_u_29 = workspace:GetServerTimeNow()
+    local v_u_30 = v_u_29 + v27 * 25 / 44
+    local v_u_31 = p24.TimingIntervals
+    local v32 = workspace.CurrentCamera:WorldToViewportPoint(p_u_26.WorldPosition)
+    local v_u_33 = UDim2.fromOffset(v32.X, v32.Y)
+    local v_u_34 = script.Frame:Clone()
+    local v_u_35 = v_u_34.Frame.Size
+    v_u_34.Frame.Size = UDim2.fromScale(0, 0)
+    v_u_34.Position = v_u_33
+    v_u_34.ZIndex = p24.ZIndex
+    v_u_34.Parent = v_u_17
+    local function v_u_39(p36)
+        -- upvalues: (ref) v_u_4, (copy) v_u_34
+        local v37 = {
+            ["Size"] = p36 or UDim2.fromScale(0, 0)
+        }
+        local v38 = v_u_4:Create(v_u_34.Frame, TweenInfo.new(0.2, Enum.EasingStyle.Circular, Enum.EasingDirection.InOut), v37)
+        v38:Play()
+        v38.Completed:Wait()
+        v_u_34:Destroy()
+    end
+    v_u_4:Create(v_u_34.Frame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        ["Size"] = v_u_35
+    }):Play()
+    local v_u_40 = v_u_4:Create(v_u_34.Frame.Circle, TweenInfo.new(v27, Enum.EasingStyle.Linear), {
+        ["Size"] = UDim2.fromScale(0, 0)
+    })
+    v_u_40:Play()
+    local v_u_41 = false
+    local v_u_42 = task.delay(v27 * 25 / 44 - v27 / 10 - 0.05, function()
+        -- upvalues: (ref) v_u_4, (copy) v_u_34
+        v_u_4:Create(v_u_34.Frame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            ["ImageColor3"] = Color3.fromRGB(72, 108, 72)
+        }):Play()
+        v_u_4:Create(v_u_34.Frame.Border, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            ["ImageColor3"] = Color3.fromRGB(0, 255, 8)
+        }):Play()
+    end)
+    local v_u_43 = task.delay(v27 / 10 + v27 * 25 / 44, function()
+        -- upvalues: (ref) v_u_4, (copy) v_u_34
+        v_u_4:Create(v_u_34.Frame, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            ["ImageColor3"] = Color3.fromRGB(108, 70, 70)
+        }):Play()
+        v_u_4:Create(v_u_34.Frame.Circle, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            ["ImageColor3"] = Color3.fromRGB(214, 0, 4)
+        }):Play()
+        v_u_4:Create(v_u_34.Frame.Border, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            ["ImageColor3"] = Color3.fromRGB(255, 0, 0)
+        }):Play()
+    end)
+    task.delay(v27, function()
+        -- upvalues: (ref) v_u_41, (copy) v_u_39
+        if not v_u_41 then
+            v_u_41 = true
+            v_u_39()
+        end
+    end)
+    local v_u_44 = false
+    local function v_u_56()
+        -- upvalues: (ref) v_u_41, (copy) v_u_29, (copy) v_u_30, (copy) v_u_31, (ref) v_u_18, (copy) v_u_33, (ref) v_u_17, (ref) v_u_4, (ref) v_u_44, (ref) v_u_11, (copy) v_u_34, (copy) p_u_25, (copy) p_u_26, (copy) v_u_43, (copy) v_u_42, (copy) v_u_35, (copy) v_u_40, (copy) v_u_39
+        if v_u_41 then
+            return
+        end
+        v_u_41 = true
+        local _ = workspace:GetServerTimeNow() - v_u_29
+        local v45 = workspace:GetServerTimeNow() - v_u_30
+        local v46 = math.abs(v45)
+        for _, v48 in v_u_31 do
+            if v46 <= v48.Interval then
+                goto l6
+            end
+        end
+        local v48 = {
+            ["Name"] = "Bad"
+        }
+        ::l6::
+        local v49 = v_u_18:NextNumber(0.4, 0.65)
+        local v50 = script[v48.Name]:Clone()
+        v50.Position = UDim2.new(v_u_18:NextNumber(-0.07, 0.07), v_u_33.X.Offset, v_u_18:NextNumber(-0.12, 0), v_u_33.Y.Offset)
+        v50.Parent = v_u_17
+        game.Debris:AddItem(v50, v49)
+        v_u_4:Create(v50, TweenInfo.new(v49, Enum.EasingStyle.Linear), {
+            ["Position"] = v50.Position - UDim2.fromScale(0, v_u_18:NextNumber(0.08, 0.15))
+        }):Play()
+        v_u_4:Create(v50, TweenInfo.new(v49, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+            ["TextTransparency"] = 1
+        }):Play()
+        v_u_4:Create(v50.UIStroke, TweenInfo.new(v49, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+            ["Transparency"] = 1
+        }):Play()
+        if v48.Name == "Bad" then
+            v_u_11:PlaySound("General", "Hammer Fail", true).Parent = workspace.Debris
+            task.cancel(v_u_42)
+            coroutine.resume(v_u_43)
+        else
+            v_u_44 = true
+            v_u_11:PlaySound("General", "Hammer Success", true).Parent = workspace.Debris
+            v_u_4:Create(v_u_34.Frame.Circle, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+                ["ImageColor3"] = Color3.fromRGB(67, 255, 10)
+            }):Play()
+            local v51 = script.Part.Attachment:Clone()
+            v51.Parent = p_u_25
+            v51.CFrame = p_u_26.CFrame
+            game.Debris:AddItem(v51, 1)
+            for _, v52 in v51:GetDescendants() do
+                if v52:IsA("ParticleEmitter") then
+                    v52:Emit(v52:GetAttribute("EmitCount"))
+                end
+            end
+            task.cancel(v_u_43)
+        end
+        local v53 = 1.75 * v_u_35.X.Scale
+        local v54 = 1.75 * v_u_35.Y.Scale
+        v_u_40:Pause()
+        for _, v55 in v_u_34:GetDescendants() do
+            if v55:IsA("GuiObject") then
+                v_u_4:Create(v55, TweenInfo.new(0.2), {
+                    ["ImageTransparency"] = 1
+                }):Play()
+            end
+        end
+        v_u_39(v_u_44 and UDim2.fromScale(v53, v54) or nil)
+    end
+    v_u_34.MouseButton1Click:Connect(function()
+        -- upvalues: (copy) v_u_56
+        v_u_56()
+    end)
+    local v57, v58
+    if v_u_2.PreferredInput == Enum.PreferredInput.Gamepad then
+        local v_u_59 = pickInactiveControllerInput()
+        local v60 = v_u_2:GetStringForKeyCode(v_u_59)
+        local v_u_61 = v_u_1.Assets.GamepadButtons:FindFirstChild(v60)
+        if v_u_61 then
+            v_u_61 = v_u_61:Clone()
+            v_u_61.AnchorPoint = Vector2.new(0.5, 1)
+            v_u_61.Position = UDim2.fromScale(0.5, 1.2)
+            v_u_61.Size = UDim2.fromScale(0.4, 0.4)
+            v_u_61.Parent = v_u_34
+        end
+        local v62 = v_u_20
+        table.insert(v62, v_u_59)
+        v57 = v_u_2.InputBegan:Connect(function(p63)
+            -- upvalues: (ref) v_u_41, (copy) v_u_59, (copy) v_u_56, (ref) v_u_20, (ref) v_u_61
+            if not v_u_41 then
+                if p63.KeyCode == v_u_59 then
+                    v_u_56()
+                    if v_u_41 then
+                        local v64 = table.find(v_u_20, v_u_59)
+                        if v64 then
+                            table.remove(v_u_20, v64)
+                        end
+                        if v_u_61 then
+                            v_u_61:Destroy()
+                        end
+                    end
+                end
+            end
+        end)
+        v58 = v_u_44
+    else
+        v58 = v_u_44
+        v57 = nil
+    end
+    while not v_u_41 do
+        task.wait()
+    end
+    if v57 then
+        v57:Disconnect()
+    end
+    return v58
+end
+function v21.Start(p_u_65, p66)
+    -- upvalues: (copy) v_u_17, (copy) v_u_9, (ref) v_u_20, (copy) v_u_13, (copy) v_u_11, (copy) v_u_12, (copy) v_u_15, (copy) v_u_4, (copy) v_u_16, (copy) v_u_2, (copy) v_u_18, (copy) v_u_10, (copy) v_u_8
+    local _ = workspace:GetServerTimeNow() - p66.StartTime
+    local v_u_67 = false
+    v_u_17.Timer.Bar.Size = UDim2.fromScale(0, 0.65)
+    v_u_17.Timer.Position = UDim2.fromScale(0.506, 1.1)
+    v_u_17.Visible = true
+    local v_u_68 = v_u_9.new()
+    local v_u_69 = workspace.CurrentCamera
+    v_u_20 = {}
+    local v_u_70 = v_u_13:GetItemType(p66.Item)
+    local v71 = v_u_13:GetItemBaseType(p66.Item)
+    local v_u_72 = v_u_13:GetItemModel({
+        ["Ore"] = p66.OreType,
+        ["Type"] = p66.Item
+    })
+    local v_u_73 = v_u_70 == "Weapon" and ({} or nil) or nil
+    local v_u_74 = v_u_70 == "Weapon" and v_u_72:FindFirstChild("SwordGlow") or v_u_72.PrimaryPart
+    local v75 = v_u_70 == "Weapon" and v_u_73 and v_u_74.Size or v_u_72:GetExtentsSize()
+    local v76 = v_u_70 == "Weapon" and v_u_73 and ({
+        ["Part"] = v_u_74,
+        ["Color"] = v_u_74.Color,
+        ["Transparency"] = v_u_74.Transparency
+    } or nil) or nil
+    if v_u_72 and v_u_72.PrimaryPart then
+        v_u_72.PrimaryPart.Anchored = true
+    end
+    if v71 == "Gauntlet" then
+        v_u_74 = v_u_72.PrimaryPart
+        v75 = v_u_72:GetExtentsSize()
+        v_u_73 = nil
+        v76 = nil
+    end
+    v_u_72.Parent = workspace.Debris
+    local v77 = v_u_12[v_u_11.GetIndexFromName(p66.OreType, v_u_12)].Appearance
+    local v_u_78 = script.Mold:Clone()
+    v_u_11.SetModelSize(v_u_78, v_u_72:GetExtentsSize())
+    v_u_78:PivotTo(v_u_15.Station.CFrames.ItemTable.CFrame * CFrame.new(-15, v_u_78:GetExtentsSize().Y / 2, v_u_78:GetExtentsSize().Z / 4))
+    v_u_78.Parent = workspace.Debris
+    for _, v79 in v_u_78:GetDescendants() do
+        if v79:IsA("BasePart") then
+            if v77.Base.Color then
+                v79.Color = v77.Base.Color
+            end
+            if v77.Base.Material then
+                v79.Material = v77.Base.Material
+            end
+            if v77.Base.MaterialVariant then
+                v79.MaterialVariant = v77.Base.MaterialVariant
+            end
+        end
+    end
+    task.delay(1, function()
+        -- upvalues: (copy) v_u_78, (ref) v_u_4
+        local v_u_80 = Instance.new("CFrameValue")
+        v_u_80.Value = v_u_78.PrimaryPart.CFrame
+        v_u_80.Changed:Connect(function()
+            -- upvalues: (ref) v_u_78, (copy) v_u_80
+            v_u_78:PivotTo(v_u_80.Value)
+        end)
+        local v81 = v_u_4:Create(v_u_80, TweenInfo.new(0.8, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+            ["Value"] = v_u_78.PrimaryPart.CFrame * CFrame.new(15, 0, 0)
+        })
+        v81:Play()
+        v81.Completed:Connect(function()
+            -- upvalues: (copy) v_u_80
+            v_u_80:Destroy()
+        end)
+    end)
+    task.wait(1.8)
+    local v_u_82 = 0
+    local v91 = v_u_78.ClickDetector.MouseClick:Connect(function()
+        -- upvalues: (ref) v_u_82, (ref) v_u_16, (ref) v_u_74, (ref) v_u_11
+        if v_u_82 < 3 then
+            local v83 = v_u_16.Hit
+            local v_u_84 = script.Hammer:Clone()
+            v_u_84.Handle.Transparency = 1
+            v_u_84.Parent = workspace.Debris
+            local v85 = v_u_84.PrimaryPart
+            local v86 = CFrame.lookAt
+            local v87 = v83.Position
+            local v88 = v_u_74.Position.X
+            local v89 = v83.Position.Y
+            local v90 = v_u_74.Position.Z
+            v85.CFrame = v86(v87, (Vector3.new(v88, v89, v90)))
+            v_u_84.AnimationController.Animator:LoadAnimation(v_u_84.AnimationController.Animator.Animation):Play(0)
+            task.delay(0.27, function()
+                -- upvalues: (copy) v_u_84
+                v_u_84:Destroy()
+            end)
+            v_u_11:PlaySound("General", "Mining Hit 1", true).Parent = workspace.Debris
+            v_u_82 = v_u_82 + 1
+        end
+    end)
+    local v92
+    if v_u_2.PreferredInput == Enum.PreferredInput.Gamepad then
+        local v_u_93 = v_u_17:FindFirstChild((v_u_2:GetStringForKeyCode(Enum.KeyCode.ButtonA)))
+        if v_u_93 then
+            v_u_93.Visible = true
+        end
+        v92 = v_u_2.InputBegan:Connect(function(p94)
+            -- upvalues: (ref) v_u_82, (copy) v_u_78, (ref) v_u_18, (ref) v_u_74, (ref) v_u_11, (copy) v_u_93
+            if p94.KeyCode == Enum.KeyCode.ButtonA then
+                if v_u_82 >= 3 then
+                    return
+                end
+                local v95 = v_u_78.PrimaryPart.CFrame
+                local v96 = v_u_18:NextNumber(-0.5, 0.5)
+                local v97 = v_u_18:NextNumber(-0.5, 0.5)
+                local v98 = v_u_18
+                local v99 = v95 + Vector3.new(v96, v97, v98:NextNumber(-0.5, 0.5))
+                local v_u_100 = script.Hammer:Clone()
+                v_u_100.Handle.Transparency = 1
+                v_u_100.Parent = workspace.Debris
+                local v101 = v_u_100.PrimaryPart
+                local v102 = CFrame.lookAt
+                local v103 = v99.Position
+                local v104 = v_u_74.Position.X
+                local v105 = v99.Position.Y
+                local v106 = v_u_74.Position.Z
+                v101.CFrame = v102(v103, (Vector3.new(v104, v105, v106)))
+                v_u_100.AnimationController.Animator:LoadAnimation(v_u_100.AnimationController.Animator.Animation):Play(0)
+                task.delay(0.27, function()
+                    -- upvalues: (copy) v_u_100
+                    v_u_100:Destroy()
+                end)
+                v_u_11:PlaySound("General", "Mining Hit 1", true).Parent = workspace.Debris
+                v_u_82 = v_u_82 + 1
+                if v_u_82 >= 3 then
+                    v_u_93.Visible = false
+                end
+            end
+        end)
+    else
+        v92 = nil
+    end
+    repeat
+        task.wait()
+    until v_u_82 >= 3
+    if v91 then
+        v91:Disconnect()
+    end
+    if v92 then
+        v92:Disconnect()
+    end
+    v_u_11:PlaySound("General", "Mining Destroy", true).Parent = workspace.Debris
+    task.wait(0.15)
+    v_u_78:SetAttribute("IsDestroyed", true)
+    v_u_78.PrimaryPart:Destroy()
+    for _, v_u_107 in v_u_78.bar.Fractures:GetChildren() do
+        if v_u_107:IsA("BasePart") then
+            v_u_107.Anchored = false
+            local v108 = v_u_18:NextNumber(-10, 10)
+            local v109 = v_u_18:NextNumber(10, 20)
+            local v110 = v_u_18
+            v_u_107.AssemblyLinearVelocity = Vector3.new(v108, v109, v110:NextNumber(-10, 10))
+            local v_u_111 = v_u_18:NextNumber(0.2, 0.5)
+            task.delay(v_u_111, function()
+                -- upvalues: (ref) v_u_4, (copy) v_u_107, (copy) v_u_111
+                v_u_4:Create(v_u_107, TweenInfo.new(1.2 - v_u_111, Enum.EasingStyle.Sine, Enum.EasingDirection.In), {
+                    ["Size"] = Vector3.new(0, 0, 0)
+                }):Play()
+            end)
+        end
+    end
+    task.delay(1.2, function()
+        -- upvalues: (copy) v_u_78
+        v_u_78:Destroy()
+    end)
+    print(v_u_72, v_u_72.PrimaryPart)
+    v_u_72.PrimaryPart.CFrame = v_u_15.Station.CFrames.ItemTable.CFrame
+    if v_u_70 == "Weapon" and v_u_73 then
+        v_u_74.Color = Color3.fromRGB(213, 115, 61)
+        v_u_74.CanQuery = true
+    else
+        local v112 = v_u_72.PrimaryPart
+        v112.CFrame = v112.CFrame * CFrame.Angles(1.5707963267948966, 0, 0)
+    end
+    local v113 = RaycastParams.new()
+    v113.FilterDescendantsInstances = { v_u_15.Station }
+    v113.FilterType = Enum.RaycastFilterType.Include
+    local v114 = workspace:Raycast(v_u_72.PrimaryPart.Position + Vector3.new(0, 5, 0), Vector3.new(0, -20, 0), v113)
+    if v114 then
+        local v115 = {
+            {
+                ["axis"] = "X",
+                ["size"] = v75.X
+            },
+            {
+                ["axis"] = "Y",
+                ["size"] = v75.Y
+            },
+            {
+                ["axis"] = "Z",
+                ["size"] = v75.Z
+            }
+        }
+        table.sort(v115, function(p116, p117)
+            return p116.size > p117.size
+        end)
+        local v118 = v115[1].size
+        local v119 = v115[3].size
+        local v120 = v_u_72.PrimaryPart.Position.X
+        local v121 = v114.Position.Y + v119 / 2
+        local v122 = v_u_72.PrimaryPart.Position.Z
+        local v123 = Vector3.new(v120, v121, v122)
+        v_u_72.PrimaryPart.CFrame = CFrame.new(v123) * CFrame.Angles(v_u_72.PrimaryPart.CFrame:ToEulerAnglesXYZ())
+        if v_u_70 == "Weapon" and v_u_73 then
+            local v124 = v_u_72.PrimaryPart
+            v124.CFrame = v124.CFrame * CFrame.new(0, 0, -v118 / 4)
+        end
+    end
+    if v_u_73 then
+        for _, v125 in v_u_72:GetChildren() do
+            if v125:IsA("BasePart") then
+                v_u_73[v125] = {
+                    ["Transparency"] = v125.Transparency,
+                    ["CF"] = v125.CFrame
+                }
+                v125.Anchored = true
+                if v125 == v_u_74 or v125.Name == "SwordBase" then
+                    v125.Transparency = 0
+                end
+            end
+        end
+        for _, v126 in v_u_72:GetChildren() do
+            if v126:IsA("BasePart") and (v126 ~= v_u_74 and v126.Name ~= "SwordBase") then
+                v126.CFrame = CFrame.new((v_u_72.PrimaryPart.CFrame * CFrame.new(0, 0, -10)).Position) * CFrame.Angles(v126.CFrame:ToEulerAnglesXYZ())
+            end
+        end
+    else
+        for _, v127 in v_u_72:GetDescendants() do
+            if v127:IsA("BasePart") and v127.Parent == v_u_72 then
+                v127.CanQuery = true
+            end
+        end
+    end
+    local v128 = NumberRange.new(1.1, 1.8)
+    NumberRange.new(0.65, 1.3)
+    v_u_18:NextNumber(v128.Min, v128.Max)
+    local v_u_129 = workspace.CurrentCamera
+    local v_u_130 = {}
+    task.delay(0.5, function()
+        -- upvalues: (copy) v_u_70, (ref) v_u_73, (ref) v_u_74, (copy) v_u_72, (copy) v_u_129, (copy) v_u_130
+        local v131, v132
+        if v_u_70 == "Weapon" and v_u_73 then
+            v131 = v_u_74.CFrame
+            v132 = v_u_74.Size
+        else
+            v131, v132 = v_u_72:GetBoundingBox()
+        end
+        local v133 = v132 / 2
+        local v134 = {
+            v131 * CFrame.new(-v133.X, -v133.Y, -v133.Z).Position,
+            v131 * CFrame.new(-v133.X, -v133.Y, v133.Z).Position,
+            v131 * CFrame.new(-v133.X, v133.Y, -v133.Z).Position,
+            v131 * CFrame.new(-v133.X, v133.Y, v133.Z).Position,
+            v131 * CFrame.new(v133.X, -v133.Y, -v133.Z).Position,
+            v131 * CFrame.new(v133.X, -v133.Y, v133.Z).Position,
+            v131 * CFrame.new(v133.X, v133.Y, -v133.Z).Position,
+            v131 * CFrame.new(v133.X, v133.Y, v133.Z).Position
+        }
+        local v135 = (1 / 0)
+        local v136 = (-1 / 0)
+        local v137 = (1 / 0)
+        local v138 = (-1 / 0)
+        for _, v139 in ipairs(v134) do
+            local v140, _ = v_u_129:WorldToViewportPoint(v139)
+            local v141 = v140.X
+            v135 = math.min(v135, v141)
+            local v142 = v140.X
+            v136 = math.max(v136, v142)
+            local v143 = v140.Y
+            v137 = math.min(v137, v143)
+            local v144 = v140.Y
+            v138 = math.max(v138, v144)
+        end
+        local v145 = v_u_129.ViewportSize
+        local v146 = v145.X
+        local v147 = math.clamp(v135, 0, v146)
+        local v148 = v145.X
+        local v149 = math.clamp(v136, 0, v148)
+        local v150 = v145.Y
+        local v151 = math.clamp(v137, 0, v150)
+        local v152 = v145.Y
+        local v153 = math.clamp(v138, 0, v152)
+        if v149 <= v147 or v153 <= v151 then
+            warn("Item not visible, using screen center")
+            local v154 = v145.X / 2
+            local v155 = v145.Y / 2
+            v147 = v154 - 200
+            v149 = v154 + 200
+            v151 = v155 - 200
+            v153 = v155 + 200
+        end
+        local v156 = RaycastParams.new()
+        v156.FilterDescendantsInstances = { v_u_70 == "Weapon" and v_u_73 and v_u_74 or v_u_72:GetDescendants() }
+        v156.FilterType = Enum.RaycastFilterType.Include
+        for _ = 1, 150 do
+            if #v_u_130 >= 35 then
+                break
+            end
+            local v157 = v_u_129:ViewportPointToRay(math.random() * (v149 - v147) + v147, math.random() * (v153 - v151) + v151)
+            local v158 = workspace:Raycast(v157.Origin, v157.Direction * 5000, v156)
+            if v158 and v158.Instance:IsDescendantOf(v_u_72) then
+                local v159 = Instance.new("Attachment")
+                v159.Name = "MinigameAttachment"
+                v159.Parent = v_u_74
+                v159.WorldPosition = v158.Position
+                local v160 = v_u_130
+                table.insert(v160, v159)
+            end
+            task.wait(0.02)
+        end
+    end)
+    task.delay(1, function()
+        -- upvalues: (ref) v_u_10
+        v_u_10:Start()
+    end)
+    task.delay(4, function()
+        -- upvalues: (ref) v_u_8, (ref) v_u_17, (ref) v_u_74, (copy) v_u_69, (ref) v_u_18, (copy) p_u_65, (ref) v_u_73, (ref) v_u_4, (ref) v_u_67, (copy) v_u_68, (copy) v_u_130
+        v_u_8.target(v_u_17.Timer, 0.8, 4, {
+            ["Position"] = UDim2.fromScale(0.506, 0.871)
+        })
+        local v_u_161 = true
+        local v_u_162 = 0
+        local v_u_163 = {}
+        function script.RemoteFunction.OnClientInvoke(p164)
+            -- upvalues: (ref) v_u_161, (ref) v_u_74, (ref) v_u_69, (copy) v_u_163, (ref) v_u_162, (ref) v_u_18, (ref) p_u_65, (ref) v_u_8, (ref) v_u_17, (ref) v_u_73, (ref) v_u_4, (ref) v_u_67
+            if v_u_161 then
+                for _, v165 in v_u_74:GetChildren() do
+                    if v165:IsA("Attachment") and v165.Name == "MinigameAttachment" then
+                        local _, v166 = v_u_69:WorldToViewportPoint(v165.WorldPosition)
+                        if v166 then
+                            local v167 = v_u_163
+                            table.insert(v167, v165)
+                        end
+                    end
+                end
+                v_u_161 = false
+            end
+            local v168 = workspace:GetServerTimeNow() - p164.StartTime
+            p164.ZIndex = p164.RequiredHit - v_u_162
+            local v169 = time()
+            repeat
+                local v170 = v_u_18:NextInteger(1, #v_u_163)
+                local v171 = v_u_163[v170]
+                task.wait()
+            until v170 and v171 or time() - v169 > 0.5
+            p_u_65:CreateNote(p164, v_u_74, v171)
+            v_u_162 = v_u_162 + 1
+            v_u_8.target(v_u_17.Timer.Bar, 1, 4, {
+                ["Size"] = UDim2.fromScale(v_u_162 / p164.RequiredHit, 0.65)
+            })
+            if v_u_73 then
+                v_u_4:Create(v_u_74, TweenInfo.new(0.3, Enum.EasingStyle.Linear), {
+                    ["Transparency"] = v_u_162 / p164.RequiredHit / 1.5
+                }):Play()
+            end
+            if v_u_162 >= p164.RequiredHit then
+                v_u_67 = true
+            end
+            local v_u_172 = script.Hammer:Clone()
+            v_u_172.Handle.Transparency = 1
+            v_u_172.Parent = workspace.Debris
+            local v173 = v_u_172.PrimaryPart
+            local v174 = CFrame.lookAt
+            local v175 = v171.WorldPosition
+            local v176 = v_u_74.Position.X
+            local v177 = v171.WorldPosition.Y
+            local v178 = v_u_74.Position.Z
+            v173.CFrame = v174(v175, (Vector3.new(v176, v177, v178)))
+            v_u_172.AnimationController.Animator:LoadAnimation(v_u_172.AnimationController.Animator.Animation):Play(0)
+            task.delay(0.27, function()
+                -- upvalues: (copy) v_u_172
+                v_u_172:Destroy()
+            end)
+            return workspace:GetServerTimeNow() - v168
+        end
+        v_u_68:Add(function()
+            -- upvalues: (ref) v_u_130, (ref) v_u_17
+            script.RemoteFunction.OnClientInvoke = nil
+            for _, v179 in v_u_130 do
+                v179:Destroy()
+            end
+            task.wait(0.25)
+            v_u_17.Visible = false
+        end, true)
+    end)
+    task.spawn(function()
+        -- upvalues: (ref) v_u_67, (ref) v_u_8, (ref) v_u_17, (ref) v_u_73, (ref) v_u_4, (copy) v_u_68
+        while not v_u_67 do
+            task.wait()
+        end
+        v_u_8.target(v_u_17.Timer.Bar, 1, 8, {
+            ["Size"] = UDim2.fromScale(1, 0.65)
+        })
+        task.delay(0.25, function()
+            -- upvalues: (ref) v_u_8, (ref) v_u_17
+            v_u_8.target(v_u_17.Timer, 1, 4, {
+                ["Position"] = UDim2.fromScale(0.506, 1.1)
+            })
+        end)
+        if v_u_73 then
+            for v180, v181 in v_u_73 do
+                v_u_4:Create(v180, TweenInfo.new(0.3, Enum.EasingStyle.Circular, Enum.EasingDirection.Out), {
+                    ["Transparency"] = v180.Name == "SwordGlow" and 0.6666666666666666 or v181.Transparency,
+                    ["CFrame"] = v181.CF
+                }):Play()
+                task.wait(0.11666666666666667)
+            end
+        end
+        task.wait(0.25)
+        v_u_68:Destroy()
+    end)
+    return workspace:GetServerTimeNow(), v_u_72, v76
+end
+return v21
+--และ Forge อีกครั้งหนึ่ง
+--จากนั้นหยิบของไปขาย ของที่ได้อาจจะทำจากวัสดุไม่เหมือนกัน GUID คืออะไรไม่รู้ 
+local args = {
+	{
+		GUID = "b9019727-5800-4cd4-83cd-e4f25594e47c",
+		Type = "Falchion Knife",
+		Upgrade = 0,
+		Runes = {},
+		Ore = "Sand Stone",
+		Ores = {
+			["Sand Stone"] = 0.6666666666666666,
+			Iron = 0.3333333333333333
+		},
+		Quality = 28.362506228980518
+	}
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("CharacterService"):WaitForChild("RF"):WaitForChild("EquipItem"):InvokeServer(unpack(args))
+
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("StatusService"):WaitForChild("RF"):WaitForChild("GetPlayerEquipmentInfo"):InvokeServer()
+
+local args = {
+	workspace:WaitForChild("Proximity"):WaitForChild("Marbles")
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("ProximityService"):WaitForChild("RF"):WaitForChild("Dialogue"):InvokeServer(unpack(args))
+
+local args = {
+	"Opened"
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("DialogueService"):WaitForChild("RE"):WaitForChild("DialogueEvent"):FireServer(unpack(args))
+
+local args = {
+	"Closed"
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("DialogueService"):WaitForChild("RE"):WaitForChild("DialogueEvent"):FireServer(unpack(args))
+
+local args = {
+	"Weapon"
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("ToolService"):WaitForChild("RF"):WaitForChild("ToolActivated"):InvokeServer(unpack(args))
+
+
+local args = {
+	workspace:WaitForChild("Proximity"):WaitForChild("Marbles"),
+	"SellConfirm"
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("ProximityService"):WaitForChild("RF"):WaitForChild("ForceDialogue"):InvokeServer(unpack(args))
+
+local args = {
+	"Opened"
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("DialogueService"):WaitForChild("RE"):WaitForChild("DialogueEvent"):FireServer(unpack(args))
+local args = {
+	"SellConfirm",
+	{
+		Basket = {
+			["523ce61c-523c-49f5-b662-4b8de2b64e44"] = true --UUID ไม่เหมือนกัน
+		}
+	}
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("DialogueService"):WaitForChild("RF"):WaitForChild("RunCommand"):InvokeServer(unpack(args))
+
+--จากนั้นซื้อ Bronze Pickaxe
+local args = {
+	"Bronze Pickaxe",
+	1
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Shared"):WaitForChild("Packages"):WaitForChild("Knit"):WaitForChild("Services"):WaitForChild("ProximityService"):WaitForChild("RF"):WaitForChild("Purchase"):InvokeServer(unpack(args))
+
+--ตีแร่ 10 อัน และ ฆ่า zombie 1 ตัว
+workspace.Rocks.Island1CaveStart:GetChildren()[81].Pebble.Hitbox
+workspace.Living.Zombie5845
+
+--เดะฉันค่อยทำต่อ soon เอา Prompt แค่นี้
