@@ -242,27 +242,35 @@ if game.PlaceId == INGAME_ID then
             StatusPara:SetDesc("Hunt: " .. huntStatus .. "\nRoom: " .. currentRoom)
 
             -- 3. Ghost Speed Analysis
-            local footstepCounts = {V1=0, V2=0, V3=0, V4=0}
+            local footstepCounts = {V1=0, V2=0, V3=0, V4=0, V5=0}
+
             local function checkSnd(obj)
                 if obj:IsA("Sound") and obj.Playing then
                     if string.find(obj.Name, "HeavyFootstepsVar01") then footstepCounts.V1 += 1
                     elseif string.find(obj.Name, "HeavyFootstepsVar02") then footstepCounts.V2 += 1
                     elseif string.find(obj.Name, "HeavyFootstepsVar03") then footstepCounts.V3 += 1
-                    elseif string.find(obj.Name, "HeavyFootstepsVar04") then footstepCounts.V4 += 1 end
+                    elseif string.find(obj.Name, "HeavyFootstepsVar04") then footstepCounts.V4 += 1 
                     elseif string.find(obj.Name, "HeavyFootstepsVar05") then footstepCounts.V5 += 1 end
                 end
             end
+
+            -- ตรวจสอบใน Nil และ Workspace
             for _, v in pairs(getnilinstances()) do checkSnd(v) end
             local saltS = workspace:FindFirstChild("SaltStepped")
             if saltS then for _, s in pairs(saltS:GetChildren()) do checkSnd(s) end end
-            
+
+            -- 2. คำนวณความเร็ว
             local isFast = (footstepCounts.V1 >= 3 or footstepCounts.V2 >= 3 or footstepCounts.V3 >= 3 or footstepCounts.V4 >= 3 or footstepCounts.V5 >= 3)
 
-            local speedT = isFast and "🔥 FAST" or (footstepCounts.V1 > 0 or footstepCounts.V2 > 0 or footstepCounts.V3 > 0 or footstepCounts.V4 > 0 or footstepCounts.V5 > 0) and "🚶 NORMAL" or "🔇 No Steps"
+            local speedT = "🔇 No Steps"
+            if isFast then
+                speedT = "🔥 FAST"
+            elseif (footstepCounts.V1 > 0 or footstepCounts.V2 > 0 or footstepCounts.V3 > 0 or footstepCounts.V4 > 0 or footstepCounts.V5 > 0) then
+                speedT = "🚶 NORMAL"
+            end
 
-            -- แก้ไขการต่อสตริง (Concatenation) ให้ปิดวงเล็บและเว้นวรรคให้สวยงาม
-            SpeedPara:SetDesc("Status: " .. speedT .. "\nV1:"..footstepCounts.V1.." V2:"..footstepCounts.V2.." V3:"..footstepCounts.V3.." V4:"..footstepCounts.V4.." V5:"..footstepCounts.V5)
-
+            -- 3. อัปเดตการแสดงผล (แก้ไขวงเล็บที่ทำให้ Error)
+            SpeedPara:SetDesc("Status: " .. speedT .. "\nV1:" .. footstepCounts.V1 .. " V2:" .. footstepCounts.V2 .. " V3:" .. footstepCounts.V3 .. " V4:" .. footstepCounts.V4 .. " V5:" .. footstepCounts.V5)
             -- 4. Challenge Tracker
             local activeCH, count = {}, 0
             local rsFolder = ReplicatedStorage:FindFirstChild("ActiveChallenges")
