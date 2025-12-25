@@ -218,6 +218,54 @@ if game.PlaceId == INGAME_ID then
             end
             StatusPara:SetDesc("Hunt: " .. huntStatus .. "\nRoom: " .. currentRoom)
 
+                local huntStatus = "✅ ปลอดภัย"
+        local ghost = workspace:FindFirstChild("Ghost") or workspace:FindFirstChild("Entity")
+        if ghost then
+            local isHunting = ghost:GetAttribute("IsHunting") 
+                or (ghost:FindFirstChild("Hunting") and ghost.Hunting.Value)
+            if isHunting then
+                huntStatus = "⚠️ ผีกำลังล่า (HUNTING!)"
+            end
+            -- อัปเดต ESP ผีไปในตัว
+            ApplyHighlight(ghost, "GhostHL", Color3.fromRGB(255, 0, 0), GhostESPToggle.Value)
+        end
+
+        
+        local currentRoomName = "ไม่พบห้อง"
+        local currentTemp = "N/A"
+        local zones = workspace:FindFirstChild("Zones", true)
+        
+        if zones then
+            local ghostRoom, minTemp = nil, 100
+            for _, z in pairs(zones:GetChildren()) do
+                local tempObj = z:FindFirstChild("_____Temperature")
+                if tempObj then
+                    
+                    if tempObj.Value < minTemp then
+                        minTemp = tempObj.Value
+                        ghostRoom = z
+                    end
+                    
+                    
+                    if tempObj.Value < 3.5 then
+                        ApplyBillboard(z, "RoomBBG", "🏠 " .. z.Name .. "\n❄️ " .. string.format("%.1f", tempObj.Value) .. "°C", Color3.fromRGB(0, 255, 255), RoomESPToggle.Value)
+                    end
+                end
+            end
+            
+            if ghostRoom then
+                currentRoomName = ghostRoom.Name
+                currentTemp = string.format("%.1f", minTemp) .. "°C"
+            end
+        end
+
+        
+        StatusPara:SetDesc(
+            "สถานะ: " .. huntStatus .. "\n" ..
+            "ห้องผี: " .. currentRoomName .. "\n" ..
+            "อุณหภูมิต่ำสุด: " .. currentTemp
+        )
+
             
             local activeCH, count = {}, 0
             local vanMonitor = workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("Van") 
@@ -258,26 +306,6 @@ if game.PlaceId == INGAME_ID then
             else 
                 CursedPara:SetDesc("❌ ไม่พบไอเทมคำสาป") 
             end
-            
-            local huntStatus, currentRoom = "ปลอดภัย", "ไม่พบห้อง"
-            local ghost = workspace:FindFirstChild("Ghost") or workspace:FindFirstChild("Entity")
-            if ghost then
-                local isH = ghost:GetAttribute("IsHunting") or (ghost:FindFirstChild("Hunting") and ghost.Hunting.Value)
-                if isH then huntStatus = "⚠️ ผีกำลังล่า!" end
-                ApplyHighlight(ghost, "GhostHL", Color3.fromRGB(255, 0, 0), GhostESPToggle.Value)
-            end
-
-            local zones = workspace:FindFirstChild("Zones", true)
-            if zones then
-                for _, z in pairs(zones:GetChildren()) do
-                    local t = z:FindFirstChild("_____Temperature")
-                    if t and t.Value < 3.5 then 
-                        currentRoom = z.Name .. " (" .. string.format("%.1f", t.Value) .. "°C)"
-                        ApplyBillboard(z, "RoomBBG", "🏠 Ghost Room\n" .. string.format("%.1f", t.Value) .. "°C", Color3.fromRGB(0, 255, 255), RoomESPToggle.Value)
-                    end
-                end
-            end
-            StatusPara:SetDesc("Hunt: " .. huntStatus .. "\nRoom: " .. currentRoom)
 
             
             if FullBrightToggle.Value then Lighting.Ambient = Color3.new(1, 1, 1); Lighting.Brightness = 2; Lighting.ClockTime = 12 end
