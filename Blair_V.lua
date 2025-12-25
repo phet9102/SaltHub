@@ -226,32 +226,31 @@ if game.PlaceId == INGAME_ID then
             CHCountPara:SetDesc("Active: " .. count .. " / 8")
             CHExamPara:SetDesc(#activeCH > 0 and table.concat(activeCH, "\n") or "ปกติ")
                 
-            local huntStatus, ghostInfo = "✅ ปลอดภัย", "ไม่พบผี"
-        local ghost = workspace:FindFirstChild("Ghost") or workspace:FindFirstChild("Entity")
-        
-        if ghost then
-            local isH = ghost:GetAttribute("IsHunting") or (ghost:FindFirstChild("Hunting") and ghost.Hunting.Value)
-            local dist = LocalPlayer.Character and (ghost:GetPivot().Position - LocalPlayer.Character:GetPivot().Position).Magnitude or 0
+            local ghost = workspace:FindFirstChild("Ghost") or workspace:FindFirstChild("Entity")
+            local isH = false
             
-            if isH then huntStatus = "⚠️ ผีกำลังล่า!" end
-            ghostInfo = string.format("ระยะห่าง: %.1f เมตร", dist)
-            
-            ApplyHighlight(ghost, "GhostHL", Color3.fromRGB(255, 0, 0), GhostESPToggle.Value)
-            ApplyBillboard(ghost, "GhostBBG", "👻 GHOST 👻\n" .. ghostInfo, Color3.fromRGB(255, 0, 0), GhostESPToggle.Value)
-        end
-
-        -- 2. Ghost Room & Temp
-        local currentRoom = "ไม่พบห้อง"
-        local zones = workspace:FindFirstChild("Zones", true)
-        if zones then
-            for _, z in pairs(zones:GetChildren()) do
-                local t = z:FindFirstChild("_____Temperature")
-                if t and t.Value < 3.5 then 
-                    currentRoom = string.format("%s (%.1f°C)", z.Name, t.Value)
-                    ApplyBillboard(z, "RoomBBG", "🏠 " .. z.Name .. "\n" .. string.format("%.1f", t.Value) .. "°C", Color3.fromRGB(0, 255, 255), RoomESPToggle.Value)
+            if ghost then
+                
+                isH = ghost:GetAttribute("IsHunting")
+                
+                
+                local huntingFolder = ghost:FindFirstChild("Hunting")
+                if huntingFolder and huntingFolder:IsA("ValueBase") then 
+                    isH = huntingFolder.Value 
                 end
             end
-        end
+            
+            -- [ จุดที่มักเกิด Error ในส่วนการเช็คอุณหภูมิ ]
+            local zones = workspace:FindFirstChild("Zones", true)
+            if zones then
+                for _, z in pairs(zones:GetChildren()) do
+                    local t = z:FindFirstChild("_____Temperature")
+                    if t and t.Value < 3.5 then 
+                        currentRoom = z.Name .. " (" .. string.format("%.1f", t.Value) .. "°C)"
+                        ApplyBillboard(z, "RoomBBG", "🏠 " .. z.Name .. "\n" .. string.format("%.1f", t.Value) .. "°C", Color3.fromRGB(0, 255, 255), RoomESPToggle.Value)
+                    else ApplyBillboard(z, "RoomBBG", "", Color3.new(0,0,0), false) end
+                end
+            end
 
         -- อัปเดต StatusPara ให้ครบเหมือน Blair_V
         StatusPara:SetDesc("สถานะ: " .. huntStatus .. "\nห้องผี: " .. currentRoom .. "\n" .. ghostInfo)
