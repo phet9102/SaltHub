@@ -256,19 +256,18 @@ if game.PlaceId == INGAME_ID then
         -- อัปเดต StatusPara ให้ครบเหมือน Blair_V
         StatusPara:SetDesc("สถานะ: " .. huntStatus .. "\nห้องผี: " .. currentRoom .. "\n" .. ghostInfo)
 
-        -- 3. Cursed Objects Detection (ปรับปรุงความแม่นยำ)
-        local mapItems = workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("Items")
+        -- 3. Cursed Objects Detection 
         local cursed = workspace:FindFirstChild("SummoningCircle") 
-            or workspace:FindFirstChild("Spirit Board") 
-            or workspace:FindFirstChild("Ouija Board") -- เพิ่มชื่อที่อาจเป็นไปได้
-            or (mapItems and (mapItems:FindFirstChild("Music Box") or mapItems:FindFirstChild("Tarot Cards")))
-
-        if cursed and LocalPlayer.Character then
-            local distC = (cursed:GetPivot().Position - LocalPlayer.Character:GetPivot().Position).Magnitude
-            CursedPara:SetDesc("✅ เจอ: " .. cursed.Name .. "\n📍 ระยะ: " .. string.format("%.1f", distC) .. " เมตร")
-        else 
-            CursedPara:SetDesc("❌ ไม่พบไอเทมคำสาป") 
-        end
+                or workspace:FindFirstChild("Spirit Board") 
+                or workspace:FindFirstChild("Ouija Board")
+                or (map and map:FindFirstChild("Items") and (map.Items:FindFirstChild("Music Box") or map.Items:FindFirstChild("Tarot Cards")))
+            
+            if cursed and LocalPlayer.Character then
+                local dC = (cursed:GetPivot().Position - LocalPlayer.Character:GetPivot().Position).Magnitude
+                CursedPara:SetDesc("✅ เจอ: " .. cursed.Name .. "\n📍 ระยะ: " .. string.format("%.1f", dC) .. " เมตร")
+            else
+                CursedPara:SetDesc("❌ ไม่พบไอเทมคำสาป")
+            end
         
         -- 4. BooBoo Doll ESP (ย้ายมาสแกนแบบเจาะจงเพื่อลด Lag)
         if BooBooToggle.Value then
