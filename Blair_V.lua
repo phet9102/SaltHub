@@ -1,15 +1,39 @@
 -- =====================================================
--- PhetZY PRO
+-- PhetZY PRO (Version: Fairyโหด Beauty Edition - FIXED)
 -- =====================================================
-
 local LOBBY_ID = 6137321701
 local INGAME_ID = 6348640020
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
-local Lighting = game:GetService("Lighting")
 local LocalPlayer = Players.LocalPlayer
 
+-- [ Function: Get Map Name ]
+local function GetMapName()
+    if game.PlaceId == LOBBY_ID then 
+        return "แมพ: Lobby" 
+    elseif game.PlaceId == INGAME_ID then
+        local mapLabel = workspace:FindFirstChild("Map") 
+            and workspace.Map:FindFirstChild("Van") 
+            and workspace.Map.Van:FindFirstChild("Van") 
+            and workspace.Map.Van.Van:FindFirstChild("TimerModel")
+            and workspace.Map.Van.Van.TimerModel.Monitor.SurfaceGui:FindFirstChild("MapName")
+
+        if mapLabel and mapLabel:IsA("TextLabel") and mapLabel.Text ~= "" then
+            return "แมพ: " .. mapLabel.Text
+        end
+
+        local mapModel = workspace:FindFirstChild("Map")
+        local mapAttr = mapModel and mapModel:GetAttribute("MapName")
+        return "แมพ: " .. (mapAttr or "กำลังโหลด...")
+    end
+    return "แมพ: ไม่ทราบ"
+end
+
+if game.PlaceId ~= LOBBY_ID and game.PlaceId ~= INGAME_ID then
+    LocalPlayer:Kick("ห้ามทำตามนะจะ (PlaceId ไม่ถูกต้อง)")
+    return
+end
 
 local Map_Config = {
     ["Random"] = {min = 0, test = false}, ["Roadhouse"] = {min = 0, test = false}, ["Stillhouse"] = {min = 0, test = false},
@@ -24,32 +48,8 @@ local Map_List = {}
 for name, _ in pairs(Map_Config) do table.insert(Map_List, name) end
 table.sort(Map_List)
 
-
-local function GetMapName()
-    if game.PlaceId == LOBBY_ID then 
-        return "แมพ: Lobby" 
-    elseif game.PlaceId == INGAME_ID then
-        local mapLabel = workspace:FindFirstChild("Map") 
-            and workspace.Map:FindFirstChild("Van") 
-            and workspace.Map.Van:FindFirstChild("Van") 
-            and workspace.Map.Van.Van:FindFirstChild("TimerModel")
-            and workspace.Map.Van.Van.TimerModel.Monitor.SurfaceGui:FindFirstChild("MapName")
-
-        if mapLabel and mapLabel:IsA("TextLabel") and mapLabel.Text ~= "" then
-            return "แมพ: " .. mapLabel.Text
-        end
-        return "แมพ: " .. (workspace:FindFirstChild("Map") and workspace.Map:GetAttribute("MapName") or "กำลังโหลด...")
-    end
-    return "แมพ: ไม่ทราบ"
-end
-
-if game.PlaceId ~= LOBBY_ID and game.PlaceId ~= INGAME_ID then
-    LocalPlayer:Kick("ห้ามทำตามนะจะ (PlaceId ไม่ถูกต้อง)")
-    return
-end
-
 -- ==========================================
-
+-- LOBBY SCRIPT
 -- ==========================================
 if game.PlaceId == LOBBY_ID then
     local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/x2zu/OPEN-SOURCE-UI-ROBLOX/refs/heads/main/X2ZU%20UI%20ROBLOX%20OPEN%20SOURCE/DummyUi-leak-by-x2zu/fetching-main/Tools/Framework.luau"))()
@@ -96,41 +96,41 @@ if game.PlaceId == LOBBY_ID then
 end
 
 -- ==========================================
-
+-- IN-GAME SCRIPT
 -- ==========================================
 if game.PlaceId == INGAME_ID then
     local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
     
     local Window = Fluent:CreateWindow({
-        Title = "PhetZY PRO V.Fairyโหดมาก555", SubTitle = GetMapName(), TabWidth = 160, Size = UDim2.fromOffset(550, 500), Theme = "Dark"
+        Title = "PhetZY PRO V.Fairyโหด", SubTitle = GetMapName(), TabWidth = 160, Size = UDim2.fromOffset(500, 480), Theme = "Dark"
     })
 
     local Tabs = {
         Status = Window:AddTab({ Title = "Status", Icon = "target" }),
         Main = Window:AddTab({ Title = "Main", Icon = "star" }),
-        ESP = Window:AddTab({ Title = "ESP", Icon = "eye" }),
-        Misc = Window:AddTab({ Title = "Misc", Icon = "settings" })
+        ESP = Window:AddTab({ Title = "ESP", Icon = "eye" })
     }
     
-    local StatusPara = Tabs.Status:AddParagraph({ Title = "Ghost Status", Content = "..." })
-    local EventPara = Tabs.Status:AddParagraph({ Title = "Recent Ghost Event", Content = "ยังไม่พบเหตุการณ์..." })
-    local SpeedPara = Tabs.Status:AddParagraph({ Title = "Ghost Speed Analysis", Content = "..." })
+    local StatusPara = Tabs.Status:AddParagraph({ Title = "Ghost Status", Content = "กำลังดึงข้อมูล..." })
+    local SpeedPara = Tabs.Status:AddParagraph({ Title = "Ghost Speed Analysis", Content = "รอข้อมูลเสียงเท้า..." })
     
-    Tabs.Status:AddSection("Challenge Tracker")
+    Tabs.Status:AddSection("Objective Tracker")
+    local ObjPara = Tabs.Status:AddParagraph({ Title = "Mission Objectives", Content = "ยังไม่มีข้อมูลภารกิจ..." })
     local CHCountPara = Tabs.Status:AddParagraph({ Title = "CH Count", Content = "0 / 8" })
-    local CHExamPara = Tabs.Status:AddParagraph({ Title = "Active Challenges", Content = "..." })
     
     Tabs.Status:AddSection("Cursed Objects")
     local CursedPara = Tabs.Status:AddParagraph({ Title = "Detected Item", Content = "Searching..." })
 
-    
+    -- [ Helper Functions ]
     local function GetGhostRoom()
         local target, minTemp = nil, 100
         local zones = workspace:FindFirstChild("Zones", true)
         if zones then
             for _, z in pairs(zones:GetChildren()) do
                 local t = z:FindFirstChild("_____Temperature")
-                if t and t.Value < minTemp then minTemp = t.Value; target = z end
+                if t and t:IsA("ValueBase") and t.Value < minTemp then 
+                    minTemp = t.Value; target = z 
+                end
             end
         end
         return target
@@ -163,123 +163,126 @@ if game.PlaceId == INGAME_ID then
         elseif bbg then bbg.Enabled = false end
     end
 
-    
+    -- [ Main Tab ]
+    Tabs.Main:AddButton({
+        Title = "Drop Salt In Ghost Room",
+        Description = "วางเกลือเข้าห้องที่เย็นที่สุดอัตโนมัติ",
+        Callback = function()
+            local room = GetGhostRoom()
+            local char = LocalPlayer.Character
+            local salt = char and char:FindFirstChild("Salt")
+            if room and salt then
+                salt.Remote.Drop:FireServer(room.CFrame, salt.Ammo.Capacity)
+                Fluent:Notify({Title = "PhetZY", Content = "Drop เกลือลงห้อง " .. room.Name .. " แล้ว", Duration = 3})
+            else
+                Fluent:Notify({Title = "Error", Content = "ไม่พบห้องผีหรือไม่ได้ถือเกลือ", Duration = 3})
+            end
+        end
+    })
+
+    -- [ ESP Toggles ]
+    local GhostESPToggle = Tabs.ESP:AddToggle("GhostESP", {Title = "Ghost ESP", Default = false })
+    local RoomESPToggle = Tabs.ESP:AddToggle("RoomESP", {Title = "Ghost Room ESP", Default = false })
+    local BooBooToggle = Tabs.ESP:AddToggle("BooBooToggle", {Title = "ESP Boo Boo Doll", Default = false })
+
+    local CH_Translate = { ["evidencelessOne"] = "-1 Evidence", ["evidencelessTwo"] = "-2 Evidences", ["noCrucifixes"] = "No Crucifixes", ["noGracePeriod"] = "No Grace Period", ["noHiding"] = "No Hiding Spots", ["noLights"] = "No Lights", ["noSanity"] = "No Sanity", ["slowPlayer"] = "Slow Players" }
+
+    -- [ Main Logic Loop ]
     task.spawn(function()
-        while true do task.wait(0.4)
-            -- 1. Ghost & Speed Detection
+        while true do task.wait(0.5)
+            -- 1. Check Ghost Speed Logic
             local footstepCounts = {V1=0, V2=0, V3=0, V4=0}
-            local activeEvents = {}
-            
-            local function checkObj(v)
-                if not v:IsA("Sound") then return end
-                if string.find(v.Name, "HeavyFootstepsVar01") then footstepCounts.V1 += 1
-                elseif string.find(v.Name, "HeavyFootstepsVar02") then footstepCounts.V2 += 1
-                elseif string.find(v.Name, "HeavyFootstepsVar03") then footstepCounts.V3 += 1
-                elseif string.find(v.Name, "HeavyFootstepsVar04") then footstepCounts.V4 += 1 
-                elseif v.Name == "Fling" and v.Playing then table.insert(activeEvents, "ผีปาของ (Throw)")
-                elseif v.Name == "CarAlarm" and v.Playing then table.insert(activeEvents, "รถดัง! (Car Alarm)")
-                elseif string.find(v.Name, "DoorCreak") and v.Playing then table.insert(activeEvents, "ผีเปิดประตู (Door)")
-                elseif v.Name == "Light Bulb 3 (SFX)" and v.Playing then table.insert(activeEvents, "ไฟแตก (Light Event)")
-                elseif (v.Name == "LightSwitchON" or v.Name == "LightSwitchOFF") and v.Playing then table.insert(activeEvents, "ผีสับสวิตช์ (Switch)")
-                elseif v.Name == "CandleBlowOut" and v.Playing then table.insert(activeEvents, "ผีเป่าเทียน (Candle)")
+            local function checkObj(obj)
+                if obj:IsA("Sound") and obj.Playing then
+                    if string.find(obj.Name, "HeavyFootstepsVar01") then footstepCounts.V1 += 1
+                    elseif string.find(obj.Name, "HeavyFootstepsVar02") then footstepCounts.V2 += 1
+                    elseif string.find(obj.Name, "HeavyFootstepsVar03") then footstepCounts.V3 += 1
+                    elseif string.find(obj.Name, "HeavyFootstepsVar04") then footstepCounts.V4 += 1 end
                 end
             end
-
+            
             for _, v in pairs(getnilinstances()) do checkObj(v) end
-            for _, v in pairs(workspace:GetDescendants()) do 
-                checkObj(v)
-                if v.Name == "SaltStepped" then for _, s in pairs(v:GetChildren()) do checkObj(s) end end
-            end
+            local saltStepped = workspace:FindFirstChild("SaltStepped")
+            if saltStepped then for _, s in pairs(saltStepped:GetChildren()) do checkObj(s) end end
             
             local isFast = (footstepCounts.V1 >= 3 or footstepCounts.V2 >= 3 or footstepCounts.V3 >= 3 or footstepCounts.V4 >= 3)
             local speedText = isFast and "🔥 FAST (วิ่งไว)" or (footstepCounts.V1 > 0) and "🚶 NORMAL (ปกติ)" or "🔇 No Steps"
             SpeedPara:SetDesc("สถานะเท้า: " .. speedText .. "\nCounts: V1:"..footstepCounts.V1.." V2:"..footstepCounts.V2.." V3:"..footstepCounts.V3.." V4:"..footstepCounts.V4)
-            if #activeEvents > 0 then EventPara:SetDesc("เหตุการณ์: " .. activeEvents[#activeEvents]) end
 
-            
-            
-            local activeCH, count = {}, 0
-            local vanMonitor = workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("Van") 
-                and workspace.Map.Van:FindFirstChild("Van") and workspace.Map.Van.Van:FindFirstChild("TimerModel")
-                and workspace.Map.Van.Van.TimerModel.Monitor.SurfaceGui:FindFirstChild("Challenges")
-
-            if vanMonitor then
-                for _, label in pairs(vanMonitor:GetChildren()) do
-                    if label:IsA("TextLabel") and label.Visible and label.Text ~= "" and label.Text ~= "Label" then
-                        table.insert(activeCH, "• " .. label.Text)
-                        count = count + 1
-                    end
-                end
-            end
-            
-            if count == 0 then
-                local rsFolder = ReplicatedStorage:FindFirstChild("ActiveChallenges")
-                if rsFolder then
-                    for _, v in pairs(rsFolder:GetChildren()) do
-                        if v:IsA("CFrameValue") and v.Value ~= CFrame.new(0,0,0) then
-                            table.insert(activeCH, "• " .. v.Name)
-                            count = count + 1
-                        end
-                    end
-                end
-            end
-            CHCountPara:SetDesc("Active: " .. count .. " / 8")
-            CHExamPara:SetDesc(#activeCH > 0 and table.concat(activeCH, "\n") or "ปกติ")
-                
+            -- 2. Ghost Hunt & Room Status
+            local huntStatus, currentRoom = "ปลอดภัย", "ไม่พบห้อง"
             local ghost = workspace:FindFirstChild("Ghost") or workspace:FindFirstChild("Entity")
-            local isH = false
-            
             if ghost then
+                local huntVal = ghost:FindFirstChild("Hunting")
+                local isH = ghost:GetAttribute("IsHunting") or (huntVal and huntVal:IsA("ValueBase") and huntVal.Value)
                 
-                isH = ghost:GetAttribute("IsHunting")
-                
-                
-                local huntingFolder = ghost:FindFirstChild("Hunting")
-                if huntingFolder and huntingFolder:IsA("ValueBase") then 
-                    isH = huntingFolder.Value 
-                end
+                if isH then huntStatus = "⚠️ ผีกำลังไปจุ๊บคุณ" end
+                ApplyHighlight(ghost, "GhostHL", Color3.fromRGB(255, 0, 0), GhostESPToggle.Value)
+                local dist = LocalPlayer.Character and (ghost:GetPivot().Position - LocalPlayer.Character:GetPivot().Position).Magnitude or 0
+                ApplyBillboard(ghost, "GhostBBG", "👻 GHOST 👻\n[" .. string.format("%.1f", dist) .. "m]", Color3.fromRGB(255, 0, 0), GhostESPToggle.Value)
             end
-            
-            -- [ จุดที่มักเกิด Error ในส่วนการเช็คอุณหภูมิ ]
+
             local zones = workspace:FindFirstChild("Zones", true)
             if zones then
                 for _, z in pairs(zones:GetChildren()) do
                     local t = z:FindFirstChild("_____Temperature")
-                    if t and t.Value < 3.5 then 
+                    if t and t:IsA("ValueBase") and t.Value < 3.5 then 
                         currentRoom = z.Name .. " (" .. string.format("%.1f", t.Value) .. "°C)"
                         ApplyBillboard(z, "RoomBBG", "🏠 " .. z.Name .. "\n" .. string.format("%.1f", t.Value) .. "°C", Color3.fromRGB(0, 255, 255), RoomESPToggle.Value)
-                    else ApplyBillboard(z, "RoomBBG", "", Color3.new(0,0,0), false) end
+                    else 
+                        ApplyBillboard(z, "RoomBBG", "", Color3.new(0,0,0), false) 
+                    end
                 end
             end
+            StatusPara:SetDesc("Hunt: " .. huntStatus .. "\nRoom: " .. currentRoom)
 
-        -- อัปเดต StatusPara ให้ครบเหมือน Blair_V
-        StatusPara:SetDesc("สถานะ: " .. huntStatus .. "\nห้องผี: " .. currentRoom .. "\n" .. ghostInfo)
-
-        -- 3. Cursed Objects Detection 
-        local cursed = workspace:FindFirstChild("SummoningCircle") 
-                or workspace:FindFirstChild("Spirit Board") 
-                or workspace:FindFirstChild("Ouija Board")
-                or (map and map:FindFirstChild("Items") and (map.Items:FindFirstChild("Music Box") or map.Items:FindFirstChild("Tarot Cards")))
+            -- 3. Objective Tracker Logic (NEW)
+            local whiteBoard = workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("Van") 
+                and workspace.Map.Van:FindFirstChild("Van") and workspace.Map.Van.Van:FindFirstChild("Screens") 
+                and workspace.Map.Van.Screens:FindFirstChild("Whiteboard")
             
+            local objFrame = whiteBoard and whiteBoard:FindFirstChild("SurfaceGui") and whiteBoard.SurfaceGui:FindFirstChild("Frame") and whiteBoard.SurfaceGui.Frame:FindFirstChild("Objectives")
+            
+            if objFrame then
+                local objectiveList = {}
+                for _, objLabel in pairs(objFrame:GetChildren()) do
+                    if objLabel:IsA("TextLabel") and objLabel.Name ~= "UIGridLayout" then
+                        local isDone = objLabel:FindFirstChild("HasCompleted") and objLabel.HasCompleted.Value
+                        local statusIcon = isDone and "✅ " or "❌ "
+                        local cleanName = objLabel.Text:gsub("\194\176", "°")
+                        table.insert(objectiveList, statusIcon .. cleanName)
+                    end
+                end
+                ObjPara:SetDesc(#objectiveList > 0 and table.concat(objectiveList, "\n") or "ไม่มีภารกิจ")
+            end
+
+            -- 4. Challenge Tracker
+            local activeCH, count = {}, 0
+            local rsFolder = ReplicatedStorage:FindFirstChild("ActiveChallenges")
+            if rsFolder then
+                for _, v in pairs(rsFolder:GetChildren()) do
+                    if v:IsA("CFrameValue") and v.Value ~= CFrame.new(0,0,0) then
+                        table.insert(activeCH, "• " .. (CH_Translate[v.Name] or v.Name))
+                        count = count + 1
+                    end
+                end
+            end
+            CHCountPara:SetDesc("Active: " .. count .. " / 8")
+
+            -- 5. Cursed Objects & BooBoo Doll
+            local cursed = workspace:FindFirstChild("SummoningCircle") or workspace:FindFirstChild("Spirit Board") or (workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("Items") and (workspace.Map.Items:FindFirstChild("Music Box") or workspace.Map.Items:FindFirstChild("Tarot Cards")))
             if cursed and LocalPlayer.Character then
-                local dC = (cursed:GetPivot().Position - LocalPlayer.Character:GetPivot().Position).Magnitude
-                CursedPara:SetDesc("✅ เจอ: " .. cursed.Name .. "\n📍 ระยะ: " .. string.format("%.1f", dC) .. " เมตร")
-            else
-                CursedPara:SetDesc("❌ ไม่พบไอเทมคำสาป")
-            end
-        
-        -- 4. BooBoo Doll ESP (ย้ายมาสแกนแบบเจาะจงเพื่อลด Lag)
-        if BooBooToggle.Value then
-            for _, v in pairs(workspace:GetChildren()) do -- สแกนแค่ชั้นนอกหรือใน Map
-                if v.Name == "BooBooDoll" then
-                    ApplyHighlight(v, "PhetZY_HL", Color3.fromRGB(255, 0, 127), true)
+                local distC = (cursed:GetPivot().Position - LocalPlayer.Character:GetPivot().Position).Magnitude
+                CursedPara:SetDesc("✅ เจอ: " .. cursed.Name .. "\n📍 ระยะ: " .. string.format("%.1f", distC) .. " เมตร")
+            else CursedPara:SetDesc("❌ ไม่พบ") end
+
+            for _, v in pairs(workspace:GetDescendants()) do
+                if v.Name == "BooBooDoll" and v:IsA("MeshPart") then
+                    ApplyHighlight(v, "PhetZY_HL", Color3.fromRGB(255, 0, 127), BooBooToggle.Value)
                 end
             end
-        end
-
-            
-            if FullBrightToggle.Value then Lighting.Ambient = Color3.new(1, 1, 1); Lighting.Brightness = 2; Lighting.ClockTime = 12 end
-            if InfStaminaToggle.Value and LocalPlayer.Character then LocalPlayer.Character:SetAttribute("Stamina", 100) end
         end
     end)
+    
+    Window:SelectTab(1)
 end
