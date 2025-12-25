@@ -1,5 +1,5 @@
 -- =====================================================
--- PhetZY PRO (Version: Fairyโหด Beauty Edition - FIXED)
+-- PhetZY PRO (Version: Fairyโหด Beauty Edition - ALL-IN-ONE)
 -- =====================================================
 local LOBBY_ID = 6137321701
 local INGAME_ID = 6348640020
@@ -102,7 +102,7 @@ if game.PlaceId == INGAME_ID then
     local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
     
     local Window = Fluent:CreateWindow({
-        Title = "PhetZY PRO V.Fairyโหด", SubTitle = GetMapName(), TabWidth = 160, Size = UDim2.fromOffset(500, 480), Theme = "Dark"
+        Title = "PhetZY PRO V.Fairyโหด", SubTitle = GetMapName(), TabWidth = 160, Size = UDim2.fromOffset(550, 500), Theme = "Dark"
     })
 
     local Tabs = {
@@ -112,14 +112,14 @@ if game.PlaceId == INGAME_ID then
     }
     
     local StatusPara = Tabs.Status:AddParagraph({ Title = "Ghost Status", Content = "กำลังดึงข้อมูล..." })
-    local SpeedPara = Tabs.Status:AddParagraph({ Title = "Ghost Speed Analysis", Content = "รอข้อมูลเสียงเท้า..." })
     
     Tabs.Status:AddSection("Objective Tracker")
-    local ObjPara = Tabs.Status:AddParagraph({ Title = "Mission Objectives", Content = "ยังไม่มีข้อมูลภารกิจ..." })
-    local CHCountPara = Tabs.Status:AddParagraph({ Title = "CH Count", Content = "0 / 8" })
+    local ObjPara = Tabs.Status:AddParagraph({ Title = "Mission Objectives", Content = "กำลังโหลดภารกิจจาก Whiteboard..." })
     
-    Tabs.Status:AddSection("Cursed Objects")
-    local CursedPara = Tabs.Status:AddParagraph({ Title = "Detected Item", Content = "Searching..." })
+    Tabs.Status:AddSection("Analysis")
+    local SpeedPara = Tabs.Status:AddParagraph({ Title = "Ghost Speed Analysis", Content = "รอข้อมูลเสียงเท้า..." })
+    local CHCountPara = Tabs.Status:AddParagraph({ Title = "Challenge Count", Content = "0 / 8" })
+    local CursedPara = Tabs.Status:AddParagraph({ Title = "Cursed Objects", Content = "Searching..." })
 
     -- [ Helper Functions ]
     local function GetGhostRoom()
@@ -128,9 +128,7 @@ if game.PlaceId == INGAME_ID then
         if zones then
             for _, z in pairs(zones:GetChildren()) do
                 local t = z:FindFirstChild("_____Temperature")
-                if t and t:IsA("ValueBase") and t.Value < minTemp then 
-                    minTemp = t.Value; target = z 
-                end
+                if t and t:IsA("ValueBase") and t.Value < minTemp then minTemp = t.Value; target = z end
             end
         end
         return target
@@ -169,8 +167,7 @@ if game.PlaceId == INGAME_ID then
         Description = "วางเกลือเข้าห้องที่เย็นที่สุดอัตโนมัติ",
         Callback = function()
             local room = GetGhostRoom()
-            local char = LocalPlayer.Character
-            local salt = char and char:FindFirstChild("Salt")
+            local salt = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Salt")
             if room and salt then
                 salt.Remote.Drop:FireServer(room.CFrame, salt.Ammo.Capacity)
                 Fluent:Notify({Title = "PhetZY", Content = "Drop เกลือลงห้อง " .. room.Name .. " แล้ว", Duration = 3})
@@ -190,33 +187,41 @@ if game.PlaceId == INGAME_ID then
     -- [ Main Logic Loop ]
     task.spawn(function()
         while true do task.wait(0.5)
-            -- 1. Check Ghost Speed Logic
-            local footstepCounts = {V1=0, V2=0, V3=0, V4=0}
-            local function checkObj(obj)
-                if obj:IsA("Sound") and obj.Playing then
-                    if string.find(obj.Name, "HeavyFootstepsVar01") then footstepCounts.V1 += 1
-                    elseif string.find(obj.Name, "HeavyFootstepsVar02") then footstepCounts.V2 += 1
-                    elseif string.find(obj.Name, "HeavyFootstepsVar03") then footstepCounts.V3 += 1
-                    elseif string.find(obj.Name, "HeavyFootstepsVar04") then footstepCounts.V4 += 1 end
-                end
-            end
             
-            for _, v in pairs(getnilinstances()) do checkObj(v) end
-            local saltStepped = workspace:FindFirstChild("SaltStepped")
-            if saltStepped then for _, s in pairs(saltStepped:GetChildren()) do checkObj(s) end end
-            
-            local isFast = (footstepCounts.V1 >= 3 or footstepCounts.V2 >= 3 or footstepCounts.V3 >= 3 or footstepCounts.V4 >= 3)
-            local speedText = isFast and "🔥 FAST (วิ่งไว)" or (footstepCounts.V1 > 0) and "🚶 NORMAL (ปกติ)" or "🔇 No Steps"
-            SpeedPara:SetDesc("สถานะเท้า: " .. speedText .. "\nCounts: V1:"..footstepCounts.V1.." V2:"..footstepCounts.V2.." V3:"..footstepCounts.V3.." V4:"..footstepCounts.V4)
+            -- 1. Objective Tracker Logic
+            local whiteBoard = workspace:FindFirstChild("Map") 
+                and workspace.Map:FindFirstChild("Van") 
+                and workspace.Map.Van:FindFirstChild("Van")
+                and workspace.Map.Van.Van:FindFirstChild("Screens") 
+                and workspace.Map.Van.Screens:FindFirstChild("Whiteboard")
 
-            -- 2. Ghost Hunt & Room Status
+            local objFrame = whiteBoard 
+                and whiteBoard:FindFirstChild("SurfaceGui") 
+                and whiteBoard.SurfaceGui:FindFirstChild("Frame") 
+                and whiteBoard.SurfaceGui.Frame:FindFirstChild("Objectives")
+
+            if objFrame then
+                local objectiveList = {}
+                for _, objLabel in pairs(objFrame:GetChildren()) do
+                    if objLabel:IsA("TextLabel") and objLabel.Name ~= "UIListLayout" and objLabel.Text ~= "" then
+                        local hasComp = objLabel:FindFirstChild("HasCompleted")
+                        local isDone = hasComp and hasComp:IsA("ValueBase") and hasComp.Value
+                        local statusIcon = isDone and "✅" or "❌"
+                        local cleanText = objLabel.Text:gsub("\194\176", "°")
+                        table.insert(objectiveList, statusIcon .. " " .. cleanText)
+                    end
+                end
+                ObjPara:SetDesc(#objectiveList > 0 and table.concat(objectiveList, "\n") or "ไม่มีข้อมูลภารกิจ")
+            end
+
+            -- 2. Ghost Hunt & Status
             local huntStatus, currentRoom = "ปลอดภัย", "ไม่พบห้อง"
             local ghost = workspace:FindFirstChild("Ghost") or workspace:FindFirstChild("Entity")
             if ghost then
                 local huntVal = ghost:FindFirstChild("Hunting")
                 local isH = ghost:GetAttribute("IsHunting") or (huntVal and huntVal:IsA("ValueBase") and huntVal.Value)
+                if isH then huntStatus = "⚠️ ผีกำลังล่า!" end
                 
-                if isH then huntStatus = "⚠️ ผีกำลังไปจุ๊บคุณ" end
                 ApplyHighlight(ghost, "GhostHL", Color3.fromRGB(255, 0, 0), GhostESPToggle.Value)
                 local dist = LocalPlayer.Character and (ghost:GetPivot().Position - LocalPlayer.Character:GetPivot().Position).Magnitude or 0
                 ApplyBillboard(ghost, "GhostBBG", "👻 GHOST 👻\n[" .. string.format("%.1f", dist) .. "m]", Color3.fromRGB(255, 0, 0), GhostESPToggle.Value)
@@ -236,25 +241,27 @@ if game.PlaceId == INGAME_ID then
             end
             StatusPara:SetDesc("Hunt: " .. huntStatus .. "\nRoom: " .. currentRoom)
 
-            -- 3. Objective Tracker Logic (NEW)
-            local whiteBoard = workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("Van") 
-                and workspace.Map.Van:FindFirstChild("Van") and workspace.Map.Van.Van:FindFirstChild("Screens") 
-                and workspace.Map.Van.Screens:FindFirstChild("Whiteboard")
-            
-            local objFrame = whiteBoard and whiteBoard:FindFirstChild("SurfaceGui") and whiteBoard.SurfaceGui:FindFirstChild("Frame") and whiteBoard.SurfaceGui.Frame:FindFirstChild("Objectives")
-            
-            if objFrame then
-                local objectiveList = {}
-                for _, objLabel in pairs(objFrame:GetChildren()) do
-                    if objLabel:IsA("TextLabel") and objLabel.Name ~= "UIGridLayout" then
-                        local isDone = objLabel:FindFirstChild("HasCompleted") and objLabel.HasCompleted.Value
-                        local statusIcon = isDone and "✅ " or "❌ "
-                        local cleanName = objLabel.Text:gsub("\194\176", "°")
-                        table.insert(objectiveList, statusIcon .. cleanName)
-                    end
+            -- 3. Ghost Speed Analysis
+            local footstepCounts = {V1=0, V2=0, V3=0, V4=0}
+            local function checkSnd(obj)
+                if obj:IsA("Sound") and obj.Playing then
+                    if string.find(obj.Name, "HeavyFootstepsVar01") then footstepCounts.V1 += 1
+                    elseif string.find(obj.Name, "HeavyFootstepsVar02") then footstepCounts.V2 += 1
+                    elseif string.find(obj.Name, "HeavyFootstepsVar03") then footstepCounts.V3 += 1
+                    elseif string.find(obj.Name, "HeavyFootstepsVar04") then footstepCounts.V4 += 1 end
+                    elseif string.find(obj.Name, "HeavyFootstepsVar05") then footstepCounts.V5 += 1 end
                 end
-                ObjPara:SetDesc(#objectiveList > 0 and table.concat(objectiveList, "\n") or "ไม่มีภารกิจ")
             end
+            for _, v in pairs(getnilinstances()) do checkSnd(v) end
+            local saltS = workspace:FindFirstChild("SaltStepped")
+            if saltS then for _, s in pairs(saltS:GetChildren()) do checkSnd(s) end end
+            
+            local isFast = (footstepCounts.V1 >= 3 or footstepCounts.V2 >= 3 or footstepCounts.V3 >= 3 or footstepCounts.V4 >= 3 or footstepCounts.V5 >= 3)
+
+            local speedT = isFast and "🔥 FAST" or (footstepCounts.V1 > 0 or footstepCounts.V2 > 0 or footstepCounts.V3 > 0 or footstepCounts.V4 > 0 or footstepCounts.V5 > 0) and "🚶 NORMAL" or "🔇 No Steps"
+
+            -- แก้ไขการต่อสตริง (Concatenation) ให้ปิดวงเล็บและเว้นวรรคให้สวยงาม
+            SpeedPara:SetDesc("Status: " .. speedT .. "\nV1:"..footstepCounts.V1.." V2:"..footstepCounts.V2.." V3:"..footstepCounts.V3.." V4:"..footstepCounts.V4.." V5:"..footstepCounts.V5)
 
             -- 4. Challenge Tracker
             local activeCH, count = {}, 0
@@ -267,14 +274,20 @@ if game.PlaceId == INGAME_ID then
                     end
                 end
             end
-            CHCountPara:SetDesc("Active: " .. count .. " / 8")
+            CHCountPara:SetDesc("Active: " .. count .. " / 8\n" .. table.concat(activeCH, "\n"))
 
             -- 5. Cursed Objects & BooBoo Doll
-            local cursed = workspace:FindFirstChild("SummoningCircle") or workspace:FindFirstChild("Spirit Board") or (workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("Items") and (workspace.Map.Items:FindFirstChild("Music Box") or workspace.Map.Items:FindFirstChild("Tarot Cards")))
-            if cursed and LocalPlayer.Character then
-                local distC = (cursed:GetPivot().Position - LocalPlayer.Character:GetPivot().Position).Magnitude
-                CursedPara:SetDesc("✅ เจอ: " .. cursed.Name .. "\n📍 ระยะ: " .. string.format("%.1f", distC) .. " เมตร")
-            else CursedPara:SetDesc("❌ ไม่พบ") end
+            local cursedNames = {"SummoningCircle", "Spirit Board", "Music Box", "Tarot Cards"}
+            local foundCursed = "❌ ไม่พบ"
+            for _, name in pairs(cursedNames) do
+                local obj = workspace:FindFirstChild(name) or (workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("Items") and workspace.Map.Items:FindFirstChild(name))
+                if obj then
+                    local d = LocalPlayer.Character and (obj:GetPivot().Position - LocalPlayer.Character:GetPivot().Position).Magnitude or 0
+                    foundCursed = "✅ เจอ: " .. name .. " (" .. string.format("%.1f", d) .. "m)"
+                    break
+                end
+            end
+            CursedPara:SetDesc(foundCursed)
 
             for _, v in pairs(workspace:GetDescendants()) do
                 if v.Name == "BooBooDoll" and v:IsA("MeshPart") then
