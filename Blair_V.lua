@@ -241,36 +241,45 @@ if game.PlaceId == INGAME_ID then
             end
             StatusPara:SetDesc("Hunt: " .. huntStatus .. "\nRoom: " .. currentRoom)
 
-            -- 3. Ghost Speed Analysis
+            -- 1. Check Ghost Speed (Updated for V5)
             local footstepCounts = {V1=0, V2=0, V3=0, V4=0, V5=0}
-
-            local function checkSnd(obj)
+            local function checkObj(obj)
                 if obj:IsA("Sound") and obj.Playing then
-                    if string.find(obj.Name, "HeavyFootstepsVar01") then footstepCounts.V1 += 1
-                    elseif string.find(obj.Name, "HeavyFootstepsVar02") then footstepCounts.V2 += 1
-                    elseif string.find(obj.Name, "HeavyFootstepsVar03") then footstepCounts.V3 += 1
-                    elseif string.find(obj.Name, "HeavyFootstepsVar04") then footstepCounts.V4 += 1 
-                    elseif string.find(obj.Name, "HeavyFootstepsVar05") then footstepCounts.V5 += 1 end
+                    local n = obj.Name
+                    if string.find(n, "HeavyFootstepsVar01") then footstepCounts.V1 += 1
+                    elseif string.find(n, "HeavyFootstepsVar02") then footstepCounts.V2 += 1
+                    elseif string.find(n, "HeavyFootstepsVar03") then footstepCounts.V3 += 1
+                    elseif string.find(n, "HeavyFootstepsVar04") then footstepCounts.V4 += 1 
+                    elseif string.find(n, "HeavyFootstepsVar05") then footstepCounts.V5 += 1 end
                 end
             end
 
-            -- ตรวจสอบใน Nil และ Workspace
-            for _, v in pairs(getnilinstances()) do checkSnd(v) end
-            local saltS = workspace:FindFirstChild("SaltStepped")
-            if saltS then for _, s in pairs(saltS:GetChildren()) do checkSnd(s) end end
-
-            -- 2. คำนวณความเร็ว
-            local isFast = (footstepCounts.V1 >= 3 or footstepCounts.V2 >= 3 or footstepCounts.V3 >= 3 or footstepCounts.V4 >= 3 or footstepCounts.V5 >= 3)
-
-            local speedT = "🔇 No Steps"
-            if isFast then
-                speedT = "🔥 FAST"
-            elseif (footstepCounts.V1 > 0 or footstepCounts.V2 > 0 or footstepCounts.V3 > 0 or footstepCounts.V4 > 0 or footstepCounts.V5 > 0) then
-                speedT = "🚶 NORMAL"
+            -- ค้นหาเสียงเท้าจากพื้นที่ต่างๆ
+            for _, v in pairs(getnilinstances()) do checkObj(v) end
+            for _, v in pairs(workspace:GetChildren()) do 
+                checkObj(v) 
+                if v.Name == "SaltStepped" then 
+                    for _, s in pairs(v:GetChildren()) do checkObj(s) end 
+                end 
             end
 
-            -- 3. อัปเดตการแสดงผล (แก้ไขวงเล็บที่ทำให้ Error)
-            SpeedPara:SetDesc("Status: " .. speedT .. "\nV1:" .. footstepCounts.V1 .. " V2:" .. footstepCounts.V2 .. " V3:" .. footstepCounts.V3 .. " V4:" .. footstepCounts.V4 .. " V5:" .. footstepCounts.V5)
+            -- ตรวจสอบเงื่อนไขความเร็ว
+            local isFast = (footstepCounts.V1 >= 3 or footstepCounts.V2 >= 3 or footstepCounts.V3 >= 3 or footstepCounts.V4 >= 3 or footstepCounts.V5 >= 3)
+            local hasSteps = (footstepCounts.V1 > 0 or footstepCounts.V2 > 0 or footstepCounts.V3 > 0 or footstepCounts.V4 > 0 or footstepCounts.V5 > 0)
+            
+            local speedText = isFast and "🔥 FAST (วิ่งไว)" or hasSteps and "🚶 NORMAL (ปกติ)" or "🔇 No Steps"
+            
+            -- อัปเดตการแสดงผล (แก้ไขวงเล็บและการต่อสตริง)
+            local descContent = string.format("สถานะเท้า: %s\nCounts: V1:%d V2:%d V3:%d V4:%d V5:%d", 
+                speedText, 
+                footstepCounts.V1, 
+                footstepCounts.V2, 
+                footstepCounts.V3, 
+                footstepCounts.V4, 
+                footstepCounts.V5
+            )
+            SpeedPara:SetDesc(descContent)
+            
             -- 4. Challenge Tracker
             local activeCH, count = {}, 0
             local rsFolder = ReplicatedStorage:FindFirstChild("ActiveChallenges")
