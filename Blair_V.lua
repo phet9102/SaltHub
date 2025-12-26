@@ -14,6 +14,12 @@ local speedStatus = "🔇 No Steps"
 local FAST_GAP = 0.45
 local VERY_FAST_GAP = 0.28
 
+local getNil = function(name, class) 
+    for _, v in next, getnilinstances() do 
+        if v.ClassName == class and v.Name == name then returnend 
+    end 
+end
+
 
 
 local function GetMapName()
@@ -116,12 +122,13 @@ if game.PlaceId == INGAME_ID then
     local StatusPara = Tabs.Status:AddParagraph({ Title = "Ghost Status", Content = "กำลังดึงข้อมูล..." })
     
     Tabs.Status:AddSection("Objective Tracker")
-    local ObjPara = Tabs.Status:AddParagraph({ Title = "Mission Objectives", Content = "กำลังโหลดจาก Whiteboard..." })
+    local ObjPara = Tabs.Status:AddParagraph({ Title = "Mission Objectives(PATCHED)", Content = "กำลังโหลดจาก Whiteboard..." }) -- PATCHED
     
     Tabs.Status:AddSection("Analysis")
     local SpeedPara = Tabs.Status:AddParagraph({ Title = "Ghost Speed Analysis", Content = "รอข้อมูลเสียงเท้า..." })
     local CHCountPara = Tabs.Status:AddParagraph({ Title = "Challenge Count", Content = "0 / 8" })
     local CursedPara = Tabs.Status:AddParagraph({ Title = "Cursed Objects", Content = "Searching..." })
+    local EventPara = Tabs.Status:AddParagraph({ Title = "Ghost Stupid Event(หยอก)", Content = "ผีทำไรบ้างเถอะะ" })
 
 
     local function GetGhostRoom()
@@ -187,7 +194,7 @@ if game.PlaceId == INGAME_ID then
             local salt = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Salt")
             if room and salt then
                 salt.Remote.Drop:FireServer(room.CFrame, salt.Ammo.Capacity)
-                Fluent:Notify({Title = "PhetZY", Content = "Drop เกลือลงห้อง " .. room.Name .. " แล้ว", Duration = 3})
+                Fluent:Notify({Title = "Salt", Content = "Drop เกลือลงห้อง " .. room.Name .. " แล้ว", Duration = 3})
             else
                 Fluent:Notify({Title = "Error", Content = "ไม่พบห้องผีหรือไม่ได้ถือเกลือ", Duration = 3})
             end
@@ -201,10 +208,12 @@ if game.PlaceId == INGAME_ID then
 
     local CH_Translate = { ["evidencelessOne"] = "-1 Evidence", ["evidencelessTwo"] = "-2 Evidences", ["noCrucifixes"] = "No Crucifixes", ["noGracePeriod"] = "No Grace Period", ["noHiding"] = "No Hiding Spots", ["noLights"] = "No Lights", ["noSanity"] = "No Sanity", ["slowPlayer"] = "Slow Players" }
 
+
     -- [ Main Logic Loop ]
     task.spawn(function()
         while true do task.wait(0.1)
         local loopNow = tick()
+        local currentInteraction = nil
             
             --PATCHED เพราะ ค่า ใน ObjLabel มันเปลี่ยนทุกครั้ง เวลาเราเข้ามาใน แมพอย่างพวก roadhouse School โรงบาล etc
             local whiteBoard = workspace:FindFirstChild("Map") 
@@ -337,6 +346,75 @@ if game.PlaceId == INGAME_ID then
                     ApplyHighlight(v, "BOOBOO_HL", Color3.fromRGB(255, 0, 127), (not isInVan and BooBooToggle.Value))
                 end
             end
+
+            for _, light in pairs(workspace.Map.Lights:GetChildren()) do
+                local bulbSFX = light:FindFirstChild("Light Bulb 3 (SFX)", true)
+                local switchSFX = light:FindFirstChild("LightSwitchON", true)
+                if (bulbSFX and bulbSFX.Playing) or (switchSFX and switchSFX.Playing) then
+                    currentInteraction = "💡 ผีเล่นไฟ / ทำไฟแตก!"
+                    break
+                end
+            end
+
+            -- 2. เช็คปิดไฟ (ใช้ getNil ของคุณ)
+            if not currentInteraction then
+                local swOff = getNil("LightSwitchOFF", "Sound")
+                if swOff and swOff.Playing then
+                    currentInteraction = "💡 ผีปิดสวิตช์ไฟ"
+                end
+            end
+
+            -- 3. เช็คผีร้องไห้
+            if not currentInteraction and workspace:FindFirstChild("CryPart") then
+                currentInteraction = "😭 ผีกำลังร้องไห้! (Ghost Event)"
+                ApplyHighlight(workspace.CryPart, "GhostCryHL", Color3.new(1,1,1), true)
+            end
+
+            -- 4. เช็คเป่าเทียน
+            if not currentInteraction then
+                for _, candle in pairs(workspace.Map.Candles:GetChildren()) do
+                    local blowOut = candle:FindFirstChild("CandleBlowOut")
+                    if blowOut and blowOut.Playing then
+                        currentInteraction = "🕯️ ผีเป่าเทียน!"
+                        break
+                    end
+                end
+            end
+
+            -- 5. เช็คขว้างของ
+            if not currentInteraction then
+                for _, item in pairs(workspace.Map.Items:GetChildren()) do
+                    local handle = item:FindFirstChild("Handle")
+                    if handle and handle:FindFirstChild("Fling") and handle.Fling.Playing then
+                        currentInteraction = "🍽️ ผีขว้าง: " .. item.Name
+                        break
+                    end
+                end
+            end
+
+            -- 6. เช็คประตู
+            if not currentInteraction then
+                for _, door in pairs(workspace.Map.Doors:GetDescendants()) do
+                    if door:IsA("Sound") and door.Name:find("DoorCreak") and door.Playing then
+                        currentInteraction = "🚪 ผีเปิด/ปิดประตู"
+                        break
+                    end
+                end
+            end
+
+            
+            if currentInteraction then
+                lastEvent = currentInteraction
+                EventPara:SetDesc("ผีทำไร? ผีกำลัง: " .. lastEvent)
+                
+                
+                task.delay(5, function()
+                    if lastEvent == currentInteraction then
+                        EventPara:SetDesc("ผีทำไร? ผีกำลัง: เกย์ป่าวน้อน...")
+                    end
+                end)
+            end
+            
 
             --IM LAZY TO MAKE Evidence Tabs ผมทำแค่นี้พอละ5555 (จริงๆ ผมทำได้นะ แต่ไม่อยากทำ เพราะ เสียเวลาไปมากละ)
         end
