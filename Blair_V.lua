@@ -1,6 +1,7 @@
 -- =====================================================
--- PhetZY PRO (Version: Fairyโหด Beauty Edition - ALL-IN-ONE)
+-- Salt PRO (Version: Fairyโหด แต่โหดจริงคับ Beauty Edition VVVV) SRC ใครอยากศึกษา ก็มาศึกษาได้ จะได้เข้าใจว่ามันทำงานยังไง
 -- =====================================================
+-- ดัดแปลงไรก็เชิญเลอ ผมทำ Script นี้ใช้เวลา 4 วัน
 local LOBBY_ID = 6137321701
 local INGAME_ID = 6348640020
 
@@ -8,7 +9,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
--- [ Function: Get Map Name ]
+local lastStepTime = 0
+local speedStatus = "🔇 No Steps"
+local FAST_GAP = 0.45
+local VERY_FAST_GAP = 0.28
+
+
+
 local function GetMapName()
     if game.PlaceId == LOBBY_ID then 
         return "แมพ: Lobby" 
@@ -48,9 +55,6 @@ local Map_List = {}
 for name, _ in pairs(Map_Config) do table.insert(Map_List, name) end
 table.sort(Map_List)
 
--- ==========================================
--- LOBBY SCRIPT
--- ==========================================
 if game.PlaceId == LOBBY_ID then
     local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/x2zu/OPEN-SOURCE-UI-ROBLOX/refs/heads/main/X2ZU%20UI%20ROBLOX%20OPEN%20SOURCE/DummyUi-leak-by-x2zu/fetching-main/Tools/Framework.luau"))()
     local GatewayService = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("GatewayService")
@@ -60,7 +64,7 @@ if game.PlaceId == LOBBY_ID then
     local isMapConfirmed = false
 
     local Window = Library:Window({
-        Title = "PhetZY (Don't Follow)", Desc = GetMapName(), Icon = 105059922903197, Theme = "Dark",
+        Title = "Salt Hub (Don't Follow)", Desc = GetMapName(), Icon = 105059922903197, Theme = "Dark",
         Config = { Keybind = Enum.KeyCode.LeftControl, Size = UDim2.new(0, 500, 0, 400) },
         CloseUIButton = { Enabled = true, Text = "Close" }
     })
@@ -77,11 +81,11 @@ if game.PlaceId == LOBBY_ID then
     end })
 
     LobbyTab:Section({ Title = "Map Selector" })
-    LobbyTab:Dropdown({ Title = "Select Map", List = Map_List, Value = "Random", Callback = function(c) curMap = c; isMapConfirmed = false end })
+    LobbyTab:Dropdown({ Title = "Select Map(Area 51 & TempleteMap Patched)", List = Map_List, Value = "Random", Callback = function(c) curMap = c; isMapConfirmed = false end })
     LobbyTab:Dropdown({ Title = "Difficulty", List = {"Easy", "Medium", "Hard", "Nightmare"}, Callback = function(c) curDifficulty = c end })
     LobbyTab:Button({ Title = "Confirm Map Selection", Callback = function()
         local mapData = Map_Config[curMap]
-        local contract = { Map = curMap, Challenges = {}, Difficulty = curDifficulty }
+        local contract = { Map = curMap, Challenges = {}, Difficulty = curDifficulty } -- ขก. ทำ CH
         if mapData and mapData.test then contract["Testing"] = true end
         GatewayService.hostSetContract:FireServer(contract)
         isMapConfirmed = true
@@ -95,14 +99,12 @@ if game.PlaceId == LOBBY_ID then
     end })
 end
 
--- ==========================================
--- IN-GAME SCRIPT
--- ==========================================
+
 if game.PlaceId == INGAME_ID then
     local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
     
     local Window = Fluent:CreateWindow({
-        Title = "PhetZY PRO V.Fairyโหด", SubTitle = GetMapName(), TabWidth = 160, Size = UDim2.fromOffset(550, 500), Theme = "Dark"
+        Title = "Salt PRO V.Fairyโหด", SubTitle = GetMapName(), TabWidth = 160, Size = UDim2.fromOffset(550, 500), Theme = "Dark"
     })
 
     local Tabs = {
@@ -114,14 +116,14 @@ if game.PlaceId == INGAME_ID then
     local StatusPara = Tabs.Status:AddParagraph({ Title = "Ghost Status", Content = "กำลังดึงข้อมูล..." })
     
     Tabs.Status:AddSection("Objective Tracker")
-    local ObjPara = Tabs.Status:AddParagraph({ Title = "Mission Objectives", Content = "กำลังโหลดภารกิจจาก Whiteboard..." })
+    local ObjPara = Tabs.Status:AddParagraph({ Title = "Mission Objectives", Content = "กำลังโหลดจาก Whiteboard..." })
     
     Tabs.Status:AddSection("Analysis")
     local SpeedPara = Tabs.Status:AddParagraph({ Title = "Ghost Speed Analysis", Content = "รอข้อมูลเสียงเท้า..." })
     local CHCountPara = Tabs.Status:AddParagraph({ Title = "Challenge Count", Content = "0 / 8" })
     local CursedPara = Tabs.Status:AddParagraph({ Title = "Cursed Objects", Content = "Searching..." })
 
-    -- [ Helper Functions ]
+
     local function GetGhostRoom()
         local target, minTemp = nil, 100
         local zones = workspace:FindFirstChild("Zones", true)
@@ -133,6 +135,21 @@ if game.PlaceId == INGAME_ID then
         end
         return target
     end
+
+    --PATCHED ผมเทสไปหลายครั้ง ละ ()
+    workspace.ChildAdded:Connect(function(child)
+        if child.Name == "SaltStepped" then
+            local nowTick = tick()
+            local gap = nowTick - lastStepTime
+            if gap > 0.05 then 
+                if gap < VERY_FAST_GAP then speedStatus = "🚀 VERY FAST (ยายสปีด!)"
+                elseif gap < FAST_GAP then speedStatus = "🔥 FAST (ผีวิ่งไว)"
+                elseif gap < 1.3 then speedStatus = "🚶 NORMAL (ปกติ)" end
+                lastStepTime = nowTick
+            end
+        end
+    end)
+
 
     local function ApplyHighlight(obj, name, color, state)
         if not obj then return end
@@ -161,10 +178,10 @@ if game.PlaceId == INGAME_ID then
         elseif bbg then bbg.Enabled = false end
     end
 
-    -- [ Main Tab ]
+    
     Tabs.Main:AddButton({
         Title = "Drop Salt In Ghost Room",
-        Description = "วางเกลือเข้าห้องที่เย็นที่สุดอัตโนมัติ",
+        Description = "วางเกลือในห้องผี",
         Callback = function()
             local room = GetGhostRoom()
             local salt = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Salt")
@@ -177,7 +194,7 @@ if game.PlaceId == INGAME_ID then
         end
     })
 
-    -- [ ESP Toggles ]
+    
     local GhostESPToggle = Tabs.ESP:AddToggle("GhostESP", {Title = "Ghost ESP", Default = false })
     local RoomESPToggle = Tabs.ESP:AddToggle("RoomESP", {Title = "Ghost Room ESP", Default = false })
     local BooBooToggle = Tabs.ESP:AddToggle("BooBooToggle", {Title = "ESP Boo Boo Doll", Default = false })
@@ -186,9 +203,10 @@ if game.PlaceId == INGAME_ID then
 
     -- [ Main Logic Loop ]
     task.spawn(function()
-        while true do task.wait(0.5)
+        while true do task.wait(0.1)
+        local loopNow = tick()
             
-            -- 1. Objective Tracker Logic
+            --PATCHED เพราะ ค่า ใน ObjLabel มันเปลี่ยนทุกครั้ง เวลาเราเข้ามาใน แมพอย่างพวก roadhouse School โรงบาล etc
             local whiteBoard = workspace:FindFirstChild("Map") 
                 and workspace.Map:FindFirstChild("Van") 
                 and workspace.Map.Van:FindFirstChild("Van")
@@ -211,91 +229,98 @@ if game.PlaceId == INGAME_ID then
                         table.insert(objectiveList, statusIcon .. " " .. cleanText)
                     end
                 end
-                ObjPara:SetDesc(#objectiveList > 0 and table.concat(objectiveList, "\n") or "ไม่มีข้อมูลภารกิจ")
+                ObjPara:SetDesc(#objectiveList > 0 and table.concat(objectiveList, "\n") or "ไม่มีข้อมูลจ้า ตอนนี้ไม่ทำงานละ")
             end
 
-            -- 2. Ghost Hunt & Status
-            local huntStatus, currentRoom = "ปลอดภัย", "ไม่พบห้อง"
-            local ghost = workspace:FindFirstChild("Ghost") or workspace:FindFirstChild("Entity")
-            if ghost then
-                local huntVal = ghost:FindFirstChild("Hunting")
-                local isH = ghost:GetAttribute("IsHunting") or (huntVal and huntVal:IsA("ValueBase") and huntVal.Value)
-                if isH then huntStatus = "⚠️ ผีกำลังล่า!" end
+            --สแกนว่าผีล่าป่าว + อธิบาย
+            local huntStatus, currentRoom = "มันหายหัวไปไหนไม่รู้", "หาห้องเองดิดิดิ"
+            local ghost = workspace:FindFirstChild("Ghost") or workspace:FindFirstChild("Entity") -- Entity ไม่เกี่ยว ผมตั้งไปงั้น
+            --local ghost คือ การตั้งตัวแปรผี ; workspace:FindFirstChild("Ghost") -- สแกน workspace ใน dex นะ ว่ามี ghost ไหม
+            if ghost then -- ถ้ามี Ghost ขึ้นมาใน Workspace
+                local huntVal = ghost:FindFirstChild("Hunting") --Value ของ Hunting
+                local isH = ghost:GetAttribute("IsHunting") or (huntVal and huntVal:IsA("ValueBase") and huntVal.Value) -- HuntVal ติ๊กถูก
+                if isH then huntStatus = "⚠️ ผีกำลังล่า! + ไปจุ๊บเมิง5555" end --ถ้ามันติ๊กถูก -- Paragraph จะเปลี่ยน
                 
-                ApplyHighlight(ghost, "GhostHL", Color3.fromRGB(255, 0, 0), GhostESPToggle.Value)
-                local dist = LocalPlayer.Character and (ghost:GetPivot().Position - LocalPlayer.Character:GetPivot().Position).Magnitude or 0
-                ApplyBillboard(ghost, "GhostBBG", "👻 GHOST 👻\n[" .. string.format("%.1f", dist) .. "m]", Color3.fromRGB(255, 0, 0), GhostESPToggle.Value)
+                ApplyHighlight(ghost, "GhostHL", Color3.fromRGB(255, 0, 0), GhostESPToggle.Value) -- ESP
+                local dist = LocalPlayer.Character and (ghost:GetPivot().Position - LocalPlayer.Character:GetPivot().Position).Magnitude or 0 --คำนวณระยะห่างของผี จากตัวเราไปยังผี ก็คือ นำตำแหน่งผี มา ลบ กับ ตำแหน่งตัวผมนั้นแหละ GetPivot() คือฟังก์ชันที่ใช้สำหรับหา "ตำแหน่ง (Position)" และ "การหันหน้า (ภาษา eng เรียกว่า Orientation)" ของ Object นั้นๆ โดยรวมออกมาเป็นค่า CFrame เพียงตัวเดียว
+                ApplyBillboard(ghost, "GhostBBG", "👻 GHOSTแบร่ 👻\n[" .. string.format("%.1f", dist) .. "m]", Color3.fromRGB(255, 0, 0), GhostESPToggle.Value) -- ESP
             end
 
-            local zones = workspace:FindFirstChild("Zones", true)
-            if zones then
+            --หาห้องผี ทำงานปกติ (แถม อธิบายให้)
+            local zones = workspace:FindFirstChild("Zones", true) -- local zones คือ ประกาศตัวแปร ที่ชื่อว่า zones workspace:FindFirstChild("Zones", true) สแกนหา Zones
+            if zones then -- ถ้าเจอ zones
                 for _, z in pairs(zones:GetChildren()) do
-                    local t = z:FindFirstChild("_____Temperature")
-                    if t and t:IsA("ValueBase") and t.Value < 3.5 then 
-                        currentRoom = z.Name .. " (" .. string.format("%.1f", t.Value) .. "°C)"
-                        ApplyBillboard(z, "RoomBBG", "🏠 " .. z.Name .. "\n" .. string.format("%.1f", t.Value) .. "°C", Color3.fromRGB(0, 255, 255), RoomESPToggle.Value)
-                    else 
-                        ApplyBillboard(z, "RoomBBG", "", Color3.new(0,0,0), false) 
+                    if z.Name ~= "Outside" then
+                        local t = z:FindFirstChild("_____Temperature")
+                        if t and t:IsA("ValueBase") and t.Value < 3.5 then 
+                            currentRoom = z.Name .. " (" .. string.format("%.1f", t.Value) .. "°C)" -- ค่าที่จะใส่ ใน Paragraph
+                            --ตั้งแต่ for _,z ผมจะอธิบายให้ละเอียดน้า อันนี้ทำหน้าที่ ตรวจเช็ค และมันจะเดินไปที่โฟลเดอร์ Zones แล้วหยิบห้องออกมาดูทีละห้องว่า "ห้องนี้ชื่อ Outside ไหม? ถ้าไม่ใช่ อุณหภูมิกี่องศา?" ทำแบบนี้วนไปเรื่อยๆ จนครบทุกห้องในแมพ เพื่อหาว่าห้องไหนคือ ห้องผี That's All?? That's Right??
+                            ApplyBillboard(z, "RoomBBG", "🏠 " .. z.Name .. "\n" .. string.format("%.1f", t.Value) .. "°C", Color3.fromRGB(0, 255, 255), RoomESPToggle.Value)
+                        else 
+                            ApplyBillboard(z, "RoomBBG", "", Color3.new(0,0,0), false) 
+                        end
                     end
                 end
             end
             StatusPara:SetDesc("Hunt: " .. huntStatus .. "\nRoom: " .. currentRoom)
 
-            -- 1. Check Ghost Speed (Updated for V5)
-            local footstepCounts = {V1=0, V2=0, V3=0, V4=0, V5=0}
-            local function checkObj(obj)
-                if obj:IsA("Sound") and obj.Playing then
-                    local n = obj.Name
-                    if string.find(n, "HeavyFootstepsVar01") then footstepCounts.V1 += 1
-                    elseif string.find(n, "HeavyFootstepsVar02") then footstepCounts.V2 += 1
-                    elseif string.find(n, "HeavyFootstepsVar03") then footstepCounts.V3 += 1
-                    elseif string.find(n, "HeavyFootstepsVar04") then footstepCounts.V4 += 1 
-                    elseif string.find(n, "HeavyFootstepsVar05") then footstepCounts.V5 += 1 end
-                end
-            end
 
-            -- ค้นหาเสียงเท้าจากพื้นที่ต่างๆ
-            for _, v in pairs(getnilinstances()) do checkObj(v) end
-            for _, v in pairs(workspace:GetChildren()) do 
-                checkObj(v) 
-                if v.Name == "SaltStepped" then 
-                    for _, s in pairs(v:GetChildren()) do checkObj(s) end 
-                end 
-            end
-
-            -- ตรวจสอบเงื่อนไขความเร็ว
-            local isFast = (footstepCounts.V1 >= 3 or footstepCounts.V2 >= 3 or footstepCounts.V3 >= 3 or footstepCounts.V4 >= 3 or footstepCounts.V5 >= 3)
-            local hasSteps = (footstepCounts.V1 > 0 or footstepCounts.V2 > 0 or footstepCounts.V3 > 0 or footstepCounts.V4 > 0 or footstepCounts.V5 > 0)
+        
+        --Not work cuz it patched เหตุผลมีอยู่บน Gap มันไม่ตอบสนอง ต่อ loopNow
+        if loopNow - lastStepTime > 3 then speedStatus = "🔇 No Steps" end
+            local currentGapDisp = (loopNow - lastStepTime < 5) and string.format("%.2fs", loopNow - lastStepTime) or "0.00s"
+            SpeedPara:SetDesc(string.format("Status: %s\nLast Gap: %s", speedStatus, currentGapDisp))
             
-            local speedText = isFast and "🔥 FAST (วิ่งไว)" or hasSteps and "🚶 NORMAL (ปกติ)" or "🔇 No Steps"
-            
-            -- อัปเดตการแสดงผล (แก้ไขวงเล็บและการต่อสตริง)
-            local descContent = string.format("สถานะเท้า: %s\nCounts: V1:%d V2:%d V3:%d V4:%d V5:%d", 
-                speedText, 
-                footstepCounts.V1, 
-                footstepCounts.V2, 
-                footstepCounts.V3, 
-                footstepCounts.V4, 
-                footstepCounts.V5
-            )
-            SpeedPara:SetDesc(descContent)
-            
-            -- 4. Challenge Tracker
+            -- จน. CH (ทำงานปกติ)
             local activeCH, count = {}, 0
-            local rsFolder = ReplicatedStorage:FindFirstChild("ActiveChallenges")
-            if rsFolder then
-                for _, v in pairs(rsFolder:GetChildren()) do
-                    if v:IsA("CFrameValue") and v.Value ~= CFrame.new(0,0,0) then
-                        table.insert(activeCH, "• " .. (CH_Translate[v.Name] or v.Name))
+
+            
+            local vanMonitor = workspace:FindFirstChild("Map") 
+                and workspace.Map:FindFirstChild("Van") 
+                and workspace.Map.Van:FindFirstChild("Van") 
+                and workspace.Map.Van.Van:FindFirstChild("TimerModel")
+                and workspace.Map.Van.Van.TimerModel:FindFirstChild("Monitor")
+                and workspace.Map.Van.Van.TimerModel.Monitor:FindFirstChild("SurfaceGui")
+                and workspace.Map.Van.Van.TimerModel.Monitor.SurfaceGui:FindFirstChild("Challenges")
+
+            if vanMonitor then
+                for _, label in pairs(vanMonitor:GetChildren()) do
+                    if label:IsA("TextLabel") and label.Visible and label.Text ~= "" 
+                    and label.Name ~= "Template" and label.Text ~= "Label" then
+                        table.insert(activeCH, "• " .. label.Text)
                         count = count + 1
                     end
                 end
             end
-            CHCountPara:SetDesc("Active: " .. count .. " / 8\n" .. table.concat(activeCH, "\n"))
 
-            -- 5. Cursed Objects & BooBoo Doll
+            -- ถ้า Monitor ไม่มีข้อมูล ให้ดึงจาก RS Backup
+            if count == 0 then
+                local rsFolder = ReplicatedStorage:FindFirstChild("ActiveChallenges")
+                if rsFolder then
+                    for _, v in pairs(rsFolder:GetChildren()) do
+                        local isEnabled = false
+                        if v:IsA("CFrameValue") then
+                            isEnabled = (v.Value.Position.Magnitude > 1)
+                        elseif v:IsA("BoolValue") then
+                            isEnabled = v.Value
+                        end
+
+                        if isEnabled then
+                            local name = CH_Translate[v.Name] or v.Name
+                            table.insert(activeCH, "• " .. name)
+                            count = count + 1
+                        end
+                    end
+                end
+            end
+
+            --ยัดใน Paragraph แม่ม
+            local listText = #activeCH > 0 and table.concat(activeCH, "\n") or "ปกติ"
+            CHCountPara:SetDesc(string.format("Active: %d / 8\n%s", count, listText))
+
+            --ทำงาน(สำหรับคน ขก. เดินหา บูบู ทั่วแมพ)
             local cursedNames = {"SummoningCircle", "Spirit Board", "Music Box", "Tarot Cards"}
-            local foundCursed = "❌ ไม่พบ"
+            local foundCursed = "❌ ยังไม่เกิด"
             for _, name in pairs(cursedNames) do
                 local obj = workspace:FindFirstChild(name) or (workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("Items") and workspace.Map.Items:FindFirstChild(name))
                 if obj then
@@ -308,9 +333,12 @@ if game.PlaceId == INGAME_ID then
 
             for _, v in pairs(workspace:GetDescendants()) do
                 if v.Name == "BooBooDoll" and v:IsA("MeshPart") then
-                    ApplyHighlight(v, "PhetZY_HL", Color3.fromRGB(255, 0, 127), BooBooToggle.Value)
+                    local isInVan = v:IsDescendantOf(workspace.Map.Van) -- IsDescendantOf คือ ยกเว้นของไฟล์นะค้าบบ คุณเทอ
+                    ApplyHighlight(v, "BOOBOO_HL", Color3.fromRGB(255, 0, 127), (not isInVan and BooBooToggle.Value))
                 end
             end
+
+            --IM LAZY TO MAKE Evidence Tabs ผมทำแค่นี้พอละ5555 (จริงๆ ผมทำได้นะ แต่ไม่อยากทำ เพราะ เสียเวลาไปมากละ)
         end
     end)
     
