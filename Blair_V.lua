@@ -15,8 +15,11 @@ local FAST_GAP = 0.45
 local VERY_FAST_GAP = 0.28
 
 local getNil = function(name, class) 
+    if not getnilinstances then return nil end 
     for _, v in next, getnilinstances() do 
-        if v.ClassName == class and v.Name == name then returnend 
+        if v.ClassName == class and v.Name == name then 
+            return v 
+        end 
     end 
 end
 
@@ -213,7 +216,7 @@ if game.PlaceId == INGAME_ID then
     task.spawn(function()
         while true do task.wait(0.1)
         local loopNow = tick()
-        local currentInteraction = nil
+        local currentEvent = nil
             
             --PATCHED เพราะ ค่า ใน ObjLabel มันเปลี่ยนทุกครั้ง เวลาเราเข้ามาใน แมพอย่างพวก roadhouse School โรงบาล etc
             local whiteBoard = workspace:FindFirstChild("Map") 
@@ -347,70 +350,113 @@ if game.PlaceId == INGAME_ID then
                 end
             end
 
-            for _, light in pairs(workspace.Map.Lights:GetChildren()) do
-                local bulbSFX = light:FindFirstChild("Light Bulb 3 (SFX)", true)
-                local switchSFX = light:FindFirstChild("LightSwitchON", true)
-                if (bulbSFX and bulbSFX.Playing) or (switchSFX and switchSFX.Playing) then
-                    currentInteraction = "💡 ผีเล่นไฟ / ทำไฟแตก!"
-                    break
-                end
-            end
-
-            -- 2. เช็คปิดไฟ (ใช้ getNil ของคุณ)
-            if not currentInteraction then
-                local swOff = getNil("LightSwitchOFF", "Sound")
-                if swOff and swOff.Playing then
-                    currentInteraction = "💡 ผีปิดสวิตช์ไฟ"
-                end
-            end
-
-            -- 3. เช็คผีร้องไห้
-            if not currentInteraction and workspace:FindFirstChild("CryPart") then
-                currentInteraction = "😭 ผีกำลังร้องไห้! (Ghost Event)"
-                ApplyHighlight(workspace.CryPart, "GhostCryHL", Color3.new(1,1,1), true)
-            end
-
-            -- 4. เช็คเป่าเทียน
-            if not currentInteraction then
-                for _, candle in pairs(workspace.Map.Candles:GetChildren()) do
-                    local blowOut = candle:FindFirstChild("CandleBlowOut")
-                    if blowOut and blowOut.Playing then
-                        currentInteraction = "🕯️ ผีเป่าเทียน!"
-                        break
-                    end
-                end
-            end
-
-            -- 5. เช็คขว้างของ
-            if not currentInteraction then
-                for _, item in pairs(workspace.Map.Items:GetChildren()) do
-                    local handle = item:FindFirstChild("Handle")
-                    if handle and handle:FindFirstChild("Fling") and handle.Fling.Playing then
-                        currentInteraction = "🍽️ ผีขว้าง: " .. item.Name
-                        break
-                    end
-                end
-            end
-
-            -- 6. เช็คประตู
-            if not currentInteraction then
-                for _, door in pairs(workspace.Map.Doors:GetDescendants()) do
-                    if door:IsA("Sound") and door.Name:find("DoorCreak") and door.Playing then
-                        currentInteraction = "🚪 ผีเปิด/ปิดประตู"
+            local lights = workspace.Map:FindFirstChild("Lights")
+            if lights then
+                for _, light in pairs(lights:GetChildren()) do
+                    
+                    local bulbSFX = light:FindFirstChild("Light Bulb 3 (SFX)", true)
+                    local switchSFX = light:FindFirstChild("LightSwitchON", true)
+                    
+                    if (bulbSFX and bulbSFX.Playing) or (switchSFX and switchSFX.Playing) then
+                        currentEvent = "💡 ผีทำไฟแตก!"
                         break
                     end
                 end
             end
 
             
-            if currentInteraction then
-                lastEvent = currentInteraction
-                EventPara:SetDesc("ผีทำไร? ผีกำลัง: " .. lastEvent)
+            if not currentEvent then
+                local swOff = getNil("LightSwitchOFF", "Sound")
+                if swOff and swOff.Playing then
+                    currentEvent = "💡 ผีปิดสวิตช์ไฟ"
+                end
+            end
+
+            
+            if not currentEvent then
+                local doors = workspace.Map:FindFirstChild("Doors")
+                if doors then
+                    for _, door in pairs(doors:GetDescendants()) do
+                        if door:IsA("Sound") and door.Name:find("DoorCreak") and door.Playing then
+                            currentEvent = "🚪 ผีเปิด/ปิดประตู"
+                            break
+                        end
+                    end
+                end
+            end
+
+            
+            if not currentEvent then
+                local candles = workspace.Map:FindFirstChild("Candles")
+                if candles then
+                    for _, candle in pairs(candles:GetChildren()) do
+                        local blow = candle:FindFirstChild("CandleBlowOut", true)
+                        if blow and blow.Playing then
+                            currentEvent = "🕯️ ผีเป่าเทียน!"
+                            break
+                        end
+                    end
+                end
+            end
+
+            
+            if not currentEvent then
+                local items = workspace.Map:FindFirstChild("Items")
+                if items then
+                    for _, item in pairs(items:GetChildren()) do
+                        local fling = item:FindFirstChild("Fling", true)
+                        if fling and fling.Playing then
+                            currentEvent = "🍽️ ผีขว้าง: " .. item.Name
+                            break
+                        end
+                    end
+                end
+            end
+
+            
+            if not currentEvent and workspace:FindFirstChild("CryPart") then
+                currentEvent = "😭 ผีกำลังร้องไห้! งอแงง"
+            end
+
+            if not currentEvent then
+                local car = workspace.Map:FindFirstChild("Car")
+                if car and car:FindFirstChild("Truck") then
+                    local carAlarm = car.Truck.Body:FindFirstChild("CarAlarm")
+                    if carAlarm and carAlarm:IsA("Sound") and carAlarm.Playing then
+                        currentEvent = "🚨 ผีบีบแตรทำเหี้ยไร"
+                        
+                        
+                        ApplyHighlight(car.Truck, "CarAlarmHL", Color3.new(1, 0, 0), true)
+                    end
+                end
+            end
+
+            if not currentEvent then
+                local waterFolder = workspace.Map:FindFirstChild("Water")
+                if waterFolder then
+                    
+                    for _, waterObj in pairs(waterFolder:GetChildren()) do
+                        local runningSound = waterObj:FindFirstChild("Water", true) and waterObj.Water:FindFirstChild("WaterRunning")
+                        
+                        if runningSound and runningSound:IsA("Sound") and runningSound.Playing then
+                            currentEvent = "🚰 ผีเปิดน้ำ! (" .. waterObj.Name .. ")"
+                            
+                            ApplyHighlight(waterObj, "WaterHL", Color3.fromRGB(0, 170, 255), true)
+                            break
+                        end
+                    end
+                end
+            end
+
+            
+            if currentEvent then
+                lastEvent = currentEvent
+                EventPara:SetDesc("ล่าสุด: " .. lastEvent)
                 
                 
-                task.delay(5, function()
-                    if lastEvent == currentInteraction then
-                        EventPara:SetDesc("ผีทำไร? ผีกำลัง: เกย์ป่าวน้อน...")
+                task.delay(7, function()
+                    if lastEvent == currentEvent then
+                        EventPara:SetDesc("ล่าสุด: ไม่มีไร...")
                     end
                 end)
             end
