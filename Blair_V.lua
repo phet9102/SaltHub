@@ -119,7 +119,8 @@ if game.PlaceId == INGAME_ID then
     local Tabs = {
         Status = Window:AddTab({ Title = "Status", Icon = "target" }),
         Main = Window:AddTab({ Title = "Main", Icon = "star" }),
-        ESP = Window:AddTab({ Title = "ESP", Icon = "eye" })
+        ESP = Window:AddTab({ Title = "ESP", Icon = "eye" }),
+        GhostGuess = Window:AddTab({ Title = "Ghost Guess", Icon = "ghost" })
     }
     
     local StatusPara = Tabs.Status:AddParagraph({ Title = "Ghost Status", Content = "กำลังดึงข้อมูล..." })
@@ -461,10 +462,132 @@ if game.PlaceId == INGAME_ID then
                 end)
             end
             
+    local GhostsData = ReplicatedStorage:WaitForChild("SharedData"):WaitForChild("GhostsData")
+    local ghostNames = {}
+    
+    -- ดึงชื่อผีมาเก็บไว้ใน Table
+    for _, ghostObj in pairs(GhostsData:GetChildren()) do
+        table.insert(ghostNames, ghostObj.Name)
+    end
+    table.sort(ghostNames)
 
-            --IM LAZY TO MAKE Evidence Tabs ผมทำแค่นี้พอละ5555 (จริงๆ ผมทำได้นะ แต่ไม่อยากทำ เพราะ เสียเวลาไปมากละ)
+    -- [ 2. ฟังก์ชันอัปเดตข้อความในตาราง ]
+    local function getTableText(targetName)
+        local text = "```\n"
+        text = text .. string.format("%-14s | %-5s\n", "Ghost Name", "Status")
+        text = text .. "--------------------------\n"
+        for _, name in ipairs(ghostNames) do
+            local symbol = (name == targetName) and "✅ [YES]" or "❌ [ NO]"
+            text = text .. string.format("%-14s | %s\n", name, symbol)
+        end
+        return text .. "```"
+    end
+
+    -- [ 3. สร้าง UI Tabs & Paragraphs ]
+    local GuessTablePara = Tabs.GhostGuess:AddParagraph({ 
+        Title = "📋 Ghost Identification Table", 
+        Content = getTableText(nil) 
+    })
+
+    Tabs.GhostGuess:AddSection("Blink Statistics")
+    local BlinkStatPara = Tabs.GhostGuess:AddParagraph({ 
+        Title = "Real-time Blink Data", 
+        Content = "Waiting for ghost to manifest..." 
+    })
+
+    -- [ 4. ตัวแปรสำหรับคำนวณ ]
+    local identifiedGhost = nil
+    local lastBlinkTick = tick()
+    local blinkDuration = 0
+
+    -- [ 5. Main Loop สำหรับการวิเคราะห์ ]
+    task.spawn(function()
+        while true do task.wait(0.5)
+            local ghost = workspace:FindFirstChild("Ghost")
+            
+            if ghost then
+                -- A. ตรวจจับจากชื่อ Model โดยตรง (ถ้าเกมตั้งชื่อไว้)
+                if table.find(ghostNames, ghost.Name) then
+                    identifiedGhost = ghost.Name
+                end
+
+                -- B. วิเคราะห์จากความเร็วการกะพริบ (Blink Analysis)
+                local head = ghost:FindFirstChild("Head")
+                if head and head:IsA("MeshPart") then
+                    -- เชื่อมต่อ Signal เฉพาะตอนที่ยังไม่ได้เชื่อม (ป้องกัน Memory Leak)
+                    if not head:GetAttribute("BlinkConnected") then
+                        head:SetAttribute("BlinkConnected", true)
+                        head:GetPropertyChangedSignal("Transparency"):Connect(function()
+                            local now = tick()
+                            if head.Transparency > 0.5 then -- เริ่มล่องหน
+                                lastBlinkTick = now
+                            else -- กลับมาปรากฏตัว
+                                blinkDuration = now - lastBlinkTick
+                                
+                                -- เงื่อนไขแยกประเภทผี (ปรับค่าตามความเหมาะสม)
+                                if blinkDuration > 1.5 then
+                                    identifiedGhost = "Strigoi"
+                                elseif blinkDuration < 0.25 then
+                                    identifiedGhost = "Poltergeist"
+                                elseif blinkDuration >= 0.8 and blinkDuration <= 1.5 then
+                                    identifiedGhost = "Yama"
+                                end
+                            end
+                        end)
+                    end
+                end
+                
+                -- อัปเดตข้อมูลบน UI Blink
+                BlinkStatPara:SetDesc(string.format("Last Blink: %.3f s\nLikely: %s", blinkDuration, identifiedGhost or "Analyzing..."))
+            else
+                BlinkStatPara:SetDesc("Waiting for ghost to manifest...")
+            end
+
+            -- อัปเดตตารางเช็คชื่อผี (✅/❌)
+            GuessTablePara:SetDesc(getTableText(identifiedGhost))
         end
     end)
+
+    -- [ 6. ปุ่ม Reset ข้อมูล ]
+    Tabs.GhostGuess:AddSection("Actions")
+    Tabs.GhostGuess:AddButton({
+        Title = "Reset Analysis",
+        Description = "ล้างสถานะการติ๊กถูกในตาราง",
+        Callback = function()
+            identifiedGhost = nil
+            blinkDuration = 0
+            GuessTablePara:SetDesc(getTableText(nil))
+            Fluent:Notify({Title = "Reset", Content = "ล้างข้อมูลการวิเคราะห์แล้ว", Duration = 2})
+        end
+    })
+
+    -- [ 7. ปุ่มข้อมูลผี (Reference) ]
+    -- ดึงข้อมูลจาก GhostsData มาสร้างปุ่ม Info อัตโนมัติ
+    Tabs.GhostGuess:AddSection("Ghost Database")
     
+    for _, ghostObj in pairs(GhostsData:GetChildren()) do
+        Tabs.GhostGuess:AddButton({
+            Title = "Info: " .. ghostObj.Name,
+            Callback = function()
+                local desc = ghostObj:GetAttribute("Description") or "ไม่มีข้อมูล"
+                local strength = ghostObj:GetAttribute("Strength") or "ไม่ระบุ"
+                local weakness = ghostObj:GetAttribute("Weakness") or "ไม่ระบุ"
+                
+                Window:Dialog({
+                    Title = ghostObj.Name,
+                    Content = "💪 Strength: " .. strength .. "\n👎 Weakness: " .. weakness .. "\n\n" .. desc,
+                    Buttons = { { Title = "Close", Role = "Cancel" } }
+                })
+            end
+        })
+    end
+    -- ปิด Main Loop ของ In-Game logic
     Window:SelectTab(1)
 end
+
+-- แจ้งเตือนเมื่อโหลดเสร็จ
+Fluent:Notify({
+    Title = "Salt PRO Loaded",
+    Content = "สคริปต์พร้อมใช้งานแล้ว (Fairy Edition)",
+    Duration = 5
+})
