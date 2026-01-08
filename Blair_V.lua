@@ -13,6 +13,9 @@ local lastStepTime = 0
 local speedStatus = "🔇 No Steps"
 local FAST_GAP = 0.45
 local VERY_FAST_GAP = 0.28
+local lastBlinkTick = tick()
+local blinkDuration = 0
+local ghostIdentity = "Unknown"
 
 local getNil = function(name, class) 
     if not getnilinstances then return nil end 
@@ -117,10 +120,10 @@ if game.PlaceId == INGAME_ID then
     })
 
     local Tabs = {
-        Status = Window:AddTab({ Title = "Status", Icon = "target" }),
-        Main = Window:AddTab({ Title = "Main", Icon = "star" }),
-        ESP = Window:AddTab({ Title = "ESP", Icon = "eye" }),
-        GhostGuess = Window:AddTab({ Title = "Ghost Guess", Icon = "ghost" })
+    Status = Window:AddTab({ Title = "Status", Icon = "target" }),
+    Main = Window:AddTab({ Title = "Main", Icon = "star" }),
+    ESP = Window:AddTab({ Title = "ESP", Icon = "eye" }),
+    GhostGuess = Window:AddTab({ Title = "Ghost Guess", Icon = "ghost" })
     }
     
     local StatusPara = Tabs.Status:AddParagraph({ Title = "Ghost Status", Content = "กำลังดึงข้อมูล..." })
@@ -205,6 +208,38 @@ if game.PlaceId == INGAME_ID then
         end
     })
 
+
+    local AntiAFKConnection 
+
+-- 2. ส่วนของ Toggle ใน Tabs.Main
+    local AntiAFK_Toggle = Tabs.Main:AddToggle("AntiAFK_ID", {Title = "Anti AFK", Default = false })
+
+    AntiAFK_Toggle:OnChanged(function()
+        -- ใช้ Fluent ในการดึงค่า state โดยตรงจาก Toggle หรือผ่าน Options ที่ระบุ ID ให้ชัดเจน
+        local state = AntiAFK_Toggle.Value 
+        
+        if state then
+            -- ถ้าเปิด: สร้างการเชื่อมต่อ
+            if not AntiAFKConnection then
+                AntiAFKConnection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
+                    game:GetService("VirtualUser"):Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+                    task.wait(1)
+                    game:GetService("VirtualUser"):Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+                    print("Salt PRO: Anti-AFK Active")
+                end)
+                Fluent:Notify({Title = "Anti AFK", Content = "เปิดใช้งานการป้องกันการเตะออก", Duration = 3})
+            end
+        else
+            -- ถ้าปิด: ตัดการเชื่อมต่อ
+            if AntiAFKConnection then
+                AntiAFKConnection:Disconnect()
+                AntiAFKConnection = nil
+                print("Salt PRO: Anti-AFK Disabled")
+            end
+        end
+    end)
+    AntiAFK_Toggle:SetValue(false)
+
     
     local GhostESPToggle = Tabs.ESP:AddToggle("GhostESP", {Title = "Ghost ESP", Default = false })
     local RoomESPToggle = Tabs.ESP:AddToggle("RoomESP", {Title = "Ghost Room ESP", Default = false })
@@ -212,12 +247,26 @@ if game.PlaceId == INGAME_ID then
 
     local CH_Translate = { ["evidencelessOne"] = "-1 Evidence", ["evidencelessTwo"] = "-2 Evidences", ["noCrucifixes"] = "No Crucifixes", ["noGracePeriod"] = "No Grace Period", ["noHiding"] = "No Hiding Spots", ["noLights"] = "No Lights", ["noSanity"] = "No Sanity", ["slowPlayer"] = "Slow Players" }
 
+    local GuessPara = Tabs.GhostGuess:AddParagraph({ 
+    Title = "Ghost Identity Analysis", 
+    Content = "กำลังวิเคราะห์พฤติกรรมการกะพริบ..." 
+    })
+
+    Tabs.GhostGuess:AddSection("Blink Statistics")
+    local BlinkStatPara = Tabs.GhostGuess:AddParagraph({ 
+        Title = "Real-time Blink Data", 
+        Content = "Waiting for ghost to manifest..." 
+    })
+
+
 
     -- [ Main Logic Loop ]
     task.spawn(function()
         while true do task.wait(0.1)
         local loopNow = tick()
         local currentEvent = nil
+        local ghost = workspace:FindFirstChild("Ghost")
+        local head = ghost and ghost:FindFirstChild("Head")
             
             --PATCHED เพราะ ค่า ใน ObjLabel มันเปลี่ยนทุกครั้ง เวลาเราเข้ามาใน แมพอย่างพวก roadhouse School โรงบาล etc
             local whiteBoard = workspace:FindFirstChild("Map") 
@@ -358,8 +407,12 @@ if game.PlaceId == INGAME_ID then
                     local bulbSFX = light:FindFirstChild("Light Bulb 3 (SFX)", true)
                     local switchSFX = light:FindFirstChild("LightSwitchON", true)
                     
-                    if (bulbSFX and bulbSFX.Playing) or (switchSFX and switchSFX.Playing) then
+                    if (bulbSFX and bulbSFX.Playing) then
                         currentEvent = "💡 ผีทำไฟแตก!"
+                        break
+                    end
+                    if (switchSFX and switchSFX.Playing) then
+                        currentEvent = "💡 ผีเปิดไฟ!"
                         break
                     end
                 end
@@ -462,132 +515,41 @@ if game.PlaceId == INGAME_ID then
                 end)
             end
             
-    local GhostsData = ReplicatedStorage:WaitForChild("SharedData"):WaitForChild("GhostsData")
-    local ghostNames = {}
-    
-    -- ดึงชื่อผีมาเก็บไว้ใน Table
-    for _, ghostObj in pairs(GhostsData:GetChildren()) do
-        table.insert(ghostNames, ghostObj.Name)
-    end
-    table.sort(ghostNames)
-
-    -- [ 2. ฟังก์ชันอัปเดตข้อความในตาราง ]
-    local function getTableText(targetName)
-        local text = "```\n"
-        text = text .. string.format("%-14s | %-5s\n", "Ghost Name", "Status")
-        text = text .. "--------------------------\n"
-        for _, name in ipairs(ghostNames) do
-            local symbol = (name == targetName) and "✅ [YES]" or "❌ [ NO]"
-            text = text .. string.format("%-14s | %s\n", name, symbol)
-        end
-        return text .. "```"
-    end
-
-    -- [ 3. สร้าง UI Tabs & Paragraphs ]
-    local GuessTablePara = Tabs.GhostGuess:AddParagraph({ 
-        Title = "📋 Ghost Identification Table", 
-        Content = getTableText(nil) 
-    })
-
-    Tabs.GhostGuess:AddSection("Blink Statistics")
-    local BlinkStatPara = Tabs.GhostGuess:AddParagraph({ 
-        Title = "Real-time Blink Data", 
-        Content = "Waiting for ghost to manifest..." 
-    })
-
-    -- [ 4. ตัวแปรสำหรับคำนวณ ]
-    local identifiedGhost = nil
-    local lastBlinkTick = tick()
-    local blinkDuration = 0
-
-    -- [ 5. Main Loop สำหรับการวิเคราะห์ ]
-    task.spawn(function()
-        while true do task.wait(0.5)
-            local ghost = workspace:FindFirstChild("Ghost")
+            if head and head:IsA("MeshPart") then
             
-            if ghost then
-                -- A. ตรวจจับจากชื่อ Model โดยตรง (ถ้าเกมตั้งชื่อไว้)
-                if table.find(ghostNames, ghost.Name) then
-                    identifiedGhost = ghost.Name
-                end
-
-                -- B. วิเคราะห์จากความเร็วการกะพริบ (Blink Analysis)
-                local head = ghost:FindFirstChild("Head")
-                if head and head:IsA("MeshPart") then
-                    -- เชื่อมต่อ Signal เฉพาะตอนที่ยังไม่ได้เชื่อม (ป้องกัน Memory Leak)
-                    if not head:GetAttribute("BlinkConnected") then
-                        head:SetAttribute("BlinkConnected", true)
-                        head:GetPropertyChangedSignal("Transparency"):Connect(function()
-                            local now = tick()
-                            if head.Transparency > 0.5 then -- เริ่มล่องหน
-                                lastBlinkTick = now
-                            else -- กลับมาปรากฏตัว
-                                blinkDuration = now - lastBlinkTick
-                                
-                                -- เงื่อนไขแยกประเภทผี (ปรับค่าตามความเหมาะสม)
-                                if blinkDuration > 1.5 then
-                                    identifiedGhost = "Strigoi"
-                                elseif blinkDuration < 0.25 then
-                                    identifiedGhost = "Poltergeist"
-                                elseif blinkDuration >= 0.8 and blinkDuration <= 1.5 then
-                                    identifiedGhost = "Yama"
-                                end
+                if ghost.Name == "Krasue" or ghost:FindFirstChild("Krasue") then
+                    ghostIdentity = "Krasue (กระสือ)"
+                else
+                    
+                    head:GetPropertyChangedSignal("Transparency"):Connect(function()
+                        local now = tick()
+                        if head.Transparency > 0.5 then 
+                            lastBlinkTick = now
+                        else 
+                            blinkDuration = now - lastBlinkTick
+                            
+                            
+                            if blinkDuration > 1.5 then
+                                ghostIdentity = "Strigoi (Long Blink)"
+                            elseif blinkDuration < 0.25 then
+                                ghostIdentity = "Poltergeist (Fast Blink)"
+                            elseif blinkDuration >= 0.8 and blinkDuration <= 1.5 then
+                                ghostIdentity = "Yama (Slow Blink)"
+                            else
+                                ghostIdentity = "Normal Ghost (บลิ้งปกติ)"
                             end
-                        end)
-                    end
+                        end
+                    end)
                 end
                 
-                -- อัปเดตข้อมูลบน UI Blink
-                BlinkStatPara:SetDesc(string.format("Last Blink: %.3f s\nLikely: %s", blinkDuration, identifiedGhost or "Analyzing..."))
+                
+                GuessPara:SetDesc("วิเคราะห์ว่าเป็น: " .. ghostIdentity)
+                BlinkStatPara:SetDesc(string.format("Last Blink Duration: %.3f s\nType: %s", blinkDuration, ghostIdentity))
             else
-                BlinkStatPara:SetDesc("Waiting for ghost to manifest...")
+                GuessPara:SetDesc("ไม่พบผี (Ghost not manifested)")
             end
-
-            -- อัปเดตตารางเช็คชื่อผี (✅/❌)
-            GuessTablePara:SetDesc(getTableText(identifiedGhost))
         end
     end)
-
-    -- [ 6. ปุ่ม Reset ข้อมูล ]
-    Tabs.GhostGuess:AddSection("Actions")
-    Tabs.GhostGuess:AddButton({
-        Title = "Reset Analysis",
-        Description = "ล้างสถานะการติ๊กถูกในตาราง",
-        Callback = function()
-            identifiedGhost = nil
-            blinkDuration = 0
-            GuessTablePara:SetDesc(getTableText(nil))
-            Fluent:Notify({Title = "Reset", Content = "ล้างข้อมูลการวิเคราะห์แล้ว", Duration = 2})
-        end
-    })
-
-    -- [ 7. ปุ่มข้อมูลผี (Reference) ]
-    -- ดึงข้อมูลจาก GhostsData มาสร้างปุ่ม Info อัตโนมัติ
-    Tabs.GhostGuess:AddSection("Ghost Database")
     
-    for _, ghostObj in pairs(GhostsData:GetChildren()) do
-        Tabs.GhostGuess:AddButton({
-            Title = "Info: " .. ghostObj.Name,
-            Callback = function()
-                local desc = ghostObj:GetAttribute("Description") or "ไม่มีข้อมูล"
-                local strength = ghostObj:GetAttribute("Strength") or "ไม่ระบุ"
-                local weakness = ghostObj:GetAttribute("Weakness") or "ไม่ระบุ"
-                
-                Window:Dialog({
-                    Title = ghostObj.Name,
-                    Content = "💪 Strength: " .. strength .. "\n👎 Weakness: " .. weakness .. "\n\n" .. desc,
-                    Buttons = { { Title = "Close", Role = "Cancel" } }
-                })
-            end
-        })
-    end
-    -- ปิด Main Loop ของ In-Game logic
     Window:SelectTab(1)
 end
-
--- แจ้งเตือนเมื่อโหลดเสร็จ
-Fluent:Notify({
-    Title = "Salt PRO Loaded",
-    Content = "สคริปต์พร้อมใช้งานแล้ว (Fairy Edition)",
-    Duration = 5
-})
