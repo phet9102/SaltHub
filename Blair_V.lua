@@ -116,7 +116,7 @@ if game.PlaceId == INGAME_ID then
     local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
     
     local Window = Fluent:CreateWindow({
-        Title = "Salt PRO V.Fairyโหด", SubTitle = GetMapName(), TabWidth = 160, Size = UDim2.fromOffset(550, 500), Theme = "Dark"
+        Title = "Salt PRO V.Fairyโหด", SubTitle = GetMapName(), TabWidth = 140, Size = UDim2.fromOffset(480, 350), Theme = "Dark"
     })
 
     local Tabs = {
